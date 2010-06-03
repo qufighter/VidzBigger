@@ -1,0 +1,36 @@
+<html>
+  <script>
+    chrome.extension.onRequest.addListener(
+		  function(request, sender, sendResponse) {
+		  	//console.log(request.msgType);//DONT forget about PERMISISONS or the SIZE LIMITE on the returned object, hence we are returnign only the text now
+		  	if( sender.tab ){
+		  		if( request.msgType=="G_xmlhttpRequest" ){
+		  			if(sender.tab.incognito){
+		  				sendResponse({responseText:''})
+		  				return;
+		  			}
+			  		var sr = sendResponse;
+			  		var obj = request;
+						var xhr = new XMLHttpRequest();
+						xhr.onreadystatechange=function(){if(xhr.readyState == 4){sr({responseText:xhr.responseText})}};
+						xhr.open(obj.method, obj.url, true);
+						xhr.send();
+					}else if( request.msgType=="G_setValue" ){
+						//console.log("saving "+request.n+" "+request.v);
+						localStorage[request.n]=request.v;
+						sendResponse({})
+					}else if( request.msgType=="G_getValues" ){//returns all stored values in a single object, for usage once
+						var response = new Object();
+						for( i in localStorage ){
+				  		response[i]=localStorage[i];
+				  	}
+						sendResponse(response)
+					}else{
+						sendResponse({})
+					}
+		  	}else{
+		  		sendResponse({})
+		  	}
+	  });
+  </script>
+</html>
