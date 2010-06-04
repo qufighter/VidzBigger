@@ -23,6 +23,7 @@ cp -r * build/1.0  2> /dev/null
 echo "cleaning up"
 #remove any build folder in build folder and build.sh
 rm -fr build/1.0/build*
+rm -fr build/1.0/VidzBigger.*.zip
 
 echo "determining version number"
 vers=`cat manifest.json | awk -f build.awk`
@@ -30,14 +31,21 @@ vers=`cat manifest.json | awk -f build.awk`
 cd build
 
 echo "Creating zip"
-#gzip -qr9X "../../VidzBigger.$vers.zip" *
-"c:\Program Files\WinRAR\WinRAR.exe" a -afzip -r "../../VidzBigger.$vers.zip" *
+#gzip -qr9X "../VidzBigger.$vers.zip" *
+"c:\Program Files\WinRAR\WinRAR.exe" a -afzip -r "../VidzBigger.$vers.zip" *
 
 echo "Cleaning up temporary files ..."
 cd ..
 rm -rf build
 
+echo "the built zip is now in the current directory"
+mv "VidzBigger.$vers.zip" "../VidzBigger.$vers.zip"
+
 echo "The built zip should be up one level from your current location"
 
 cd ..
 pwd
+echo "the built zip is now in your builds folder one level up from pwd"
+
+mv "VidzBigger.$vers.zip" "builds/VidzBigger.$vers.zip"
+
