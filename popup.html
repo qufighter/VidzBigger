@@ -1,8 +1,129 @@
 <html>
   <script>
   	
+  	String.prototype.qslice=function(before,after){
+			var s=this.indexOf(before)+before.length; 
+			var n=this.indexOf(after,s);
+			if(n<0)return this.substr(s);
+			return this.substr(s,n-s);
+		}
+
+  	function _ge(g){
+			return document.getElementById(g);
+		}
+  	
+  	function ctn(tex){
+  		return document.createTextNode(tex);
+  	}
+  	
+  	//appnedTo should ONLY be specified on the last element that needs to be created
+  	//				which means the TOP level element (or the final parameter on the first one)
+  	function cel(typ,attributes,addchilds,appnedTo){
+  		var ne=document.createElement(typ);
+  		for( i in attributes ){
+  			if( i == 'events' ){
+  				//if(!pendingListenrs[ne])pendingListenrs[ne]=[];
+  				pendingListenrs.push([ne,attributes[i]]);
+  			}else ne.setAttribute(i,attributes[i]);
+  		}
+  		if(addchilds){
+  			for( i in addchilds ){
+	  			ne.appendChild(addchilds[i]);
+	  		}
+  		}
+  		if(appnedTo){
+  			appnedTo.appendChild(ne);
+  			for( i in pendingListenrs ){
+  				pendingListenrs[i][0].addEventListener(pendingListenrs[i][1][0],pendingListenrs[i][1][1],pendingListenrs[i][1][2]?pendingListenrs[i][1][2]:false)
+  			}
+  			pendingListenrs=[]
+  		}
+  		return ne;
+  		//identifier unexpected means your missing a comma on the row before
+  	}
+  	var pendingListenrs=[];
+  	
+  	var murl='http://www.vidzbigger.com/videoSimpleList.php?page='
+  	var page=1;
+  	function corretPage(){
+  		var np = page;
+  		var cr = _ge('mainscreen').src
+  		console.log(cr);
+  		if( cr != murl+page ){
+  			np = cr.qslice('page=','&') - 0;
+  			console.log('nepage '+np);
+  			if(np<1)np=page;
+  		}
+  		page=np;
+  	}
+  	function advance(){
+  		corretPage();
+  		_ge('mainscreen').src='loading.html';
+  		page++;
+  		window.setTimeout(loadpage,250);
+  	}
+  	function devance(){
+  		corretPage();
+  		_ge('mainscreen').src='loading.html';
+  		page--;
+  		if(page<1)page=1;
+  		window.setTimeout(loadpage,250);
+  	}
+  	function loadpage(){
+  		_ge('mainscreen').src = murl+page;
+  	}
+  	function domore(){
+  		cel('div',{'style':'min-width:200px;'},[
+  			cel('iframe',{'id':'mainscreen','style':'width:550px;height:300px;','src':'loading.html'}),
+  			cel('div',{},[
+					cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
+					cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
+				])
+
+
+	  	],_ge('viewr'));
+	  	
+	  	window.setTimeout(loadpage,250);
+  	}
+  	
+  	function doit(){
+  		document.body.removeChild(document.body.firstChild);
+  		
+  		//check setting
+  		share_enabled = false;
+  		
+  		if( share_enabled ){
+  			
+  		}else{
+  			cel('div',{'style':'min-width:200px;'},[
+  				cel('div',{'id':'viewr'},[
+  				
+//cel('iframe',{'id':'mainscreen','style':'width:500px;height:500px;','src':'loading.html'})
+  			
+		  		]),
+  				cel('div',{'class':'prow'},[
+		  			cel('label',{},[
+		  				cel('input',{'type':'checkbox','events':['click',domore]}),
+		  				ctn("Participate in View Sharing")
+		  			])
+		  		]),
+//		  		cel('div',{'class':'prow'},[
+//		  			cel('label',{},[
+//		  				cel('input',{'type':'checkbox'}),
+//		  				ctn("Use Encrypted Transmission")
+//		  			])
+//		  		]),
+		  		cel('div',{'class':'prow'},[
+		  			cel('label',{},[
+		  				ctn("VidzBigger "),
+		  				cel('input',{'type':'button','value':'Preferences'})
+		  			])
+		  		])
+	  		],document.body);
+  		}
+  	}
   </script>
-  <body onload="doit()">
+  <body onload="doit()" style="margin:0px;padding:0px;><pre>
   Hey, nothing here yet!  Sorry.  Visit YouTube or some other supported site for configuration options which should appear initially in the top right corner of the page.  Right click this icon to easily dissable VidzBigger.  I have plans for this screen but feel free to make a suggestion at <a href="http://vidzbigger.com/contact">vidzbigger.com/contact</a>
-  </body>
+  </pre></body>
 </html>
