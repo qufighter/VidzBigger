@@ -1,6 +1,9 @@
 <html>
   <script>
   	
+  	String.prototype.qreplace=function(qsearch,qreplace){
+			return this.split(qsearch).join(qreplace);
+		};
   	String.prototype.qslice=function(before,after){
 			var s=this.indexOf(before)+before.length; 
 			var n=this.indexOf(after,s);
@@ -24,6 +27,8 @@
   			if( i == 'events' ){
   				//if(!pendingListenrs[ne])pendingListenrs[ne]=[];
   				pendingListenrs.push([ne,attributes[i]]);
+  			}else if( i == 'checked'){
+  				if(attributes[i])ne.setAttribute(i,'checked');
   			}else ne.setAttribute(i,attributes[i]);
   		}
   		if(addchilds){
@@ -43,6 +48,7 @@
   	}
   	var pendingListenrs=[];
   	
+  	var share_enabled = false;
   	var murl='http://www.vidzbigger.com/videoSimpleList.php?page='
   	var page=1;
   	function corretPage(){
@@ -57,40 +63,94 @@
   		page=np;
   	}
   	function advance(){
-  		corretPage();
-  		_ge('mainscreen').src='loading.html';
+  		_ge('browser').innerHTML="L O A D I N G";
+  		//corretPage();
+  		//_ge('mainscreen').src='loading.html';
   		page++;
   		window.setTimeout(loadpage,250);
   	}
   	function devance(){
-  		corretPage();
-  		_ge('mainscreen').src='loading.html';
+  		_ge('browser').innerHTML="L O A D I N G";
+  		//corretPage();
+  		//_ge('mainscreen').src='loading.html';
   		page--;
   		if(page<1)page=1;
   		window.setTimeout(loadpage,250);
   	}
   	function loadpage(){
-  		_ge('mainscreen').src = murl+page;
+  		loadBrowserURL();
+  		//_ge('mainscreen').src = murl+page;
+  		
+  	}
+  	function clickedbrowser(ev){
+  		t=ev.target;
+  		if(t.tagName!='A')t=t.parentNode
+  		if(t.tagName=='A'){
+  			
+  			if(ev.which==2 || t.target=='_top'){
+					  	chrome.tabs.create({url:t.href}, function(t){});
+  			}else{
+	  			chrome.tabs.getSelected(null, function(tab) {
+					  	chrome.tabs.update(tab.id, {url:t.href,selected:false}, function(t){});
+	  			});
+  			}
+  		}
   	}
   	function domore(){
-  		cel('div',{'style':'min-width:200px;'},[
-  			cel('iframe',{'id':'mainscreen','style':'width:550px;height:300px;','src':'loading.html'}),
+  		if( !share_enabled ){
+  			
   			cel('div',{},[
-					cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
-					cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
-				])
-
-
-	  	],_ge('viewr'));
-	  	
+  			
+	  			//cel('div',{},[
+						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
+						cel('input',{'type':'button','value':'Next Page','events':['click',advance]}),
+					//]),
+	  			
+		  		cel('div',{'style':'min-width:600px;','id':'browser','events':['click',clickedbrowser]},[
+			  				ctn("L O A D I N G"),
+	
+		  		
+		  		
+	//	  			cel('iframe',{'id':'mainscreen','style':'width:550px;height:300px;','src':'loading.html'}),
+	//	  			cel('div',{},[
+	//						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
+	//						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
+	//					])
+		
+		
+			  	]),
+			  	
+			  	//cel('div',{},[
+						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
+						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
+					//]),
+		  	
+		  	],_ge('viewr'));
+		  	
+				loadBrowserURL()
+		  	
+		  	share_enabled=true;
+		  }else{
+		  	_ge('viewr').removeChild(_ge('viewr').firstChild);
+		  	share_enabled=false;
+		  }
 	  	window.setTimeout(loadpage,250);
+  	}
+  	
+  	function loadBrowserURL(){
+  		chrome.extension.sendRequest({'url':murl+page,'method':'GET','msgType':"G_xmlhttpRequest"}, function(response){
+	  		if(response.responseText.length > 0 )
+	  			_ge('browser').innerHTML=response.responseText.qslice('<!--VZB_B-->','<!--VZB_E-->').qreplace('"img/','"http://www.vidzbigger.com/img/');
+	  		else
+	  			_ge('browser').innerHTML='Error - Check internet connection';
+	  	});
   	}
   	
   	function doit(){
   		document.body.removeChild(document.body.firstChild);
   		
   		//check setting
-  		share_enabled = false;
+  		
   		
   		if( share_enabled ){
   			
@@ -103,20 +163,20 @@
 		  		]),
   				cel('div',{'class':'prow'},[
 		  			cel('label',{},[
-		  				cel('input',{'type':'checkbox','events':['click',domore]}),
+		  				cel('input',{'type':'checkbox','events':['click',domore],'checked':share_enabled}),
 		  				ctn("Participate in View Sharing")
 		  			])
 		  		]),
 //		  		cel('div',{'class':'prow'},[
 //		  			cel('label',{},[
-//		  				cel('input',{'type':'checkbox'}),
+//		  				cel('input',{'type':'checkbox','events':['click',domore]}),
 //		  				ctn("Use Encrypted Transmission")
 //		  			])
 //		  		]),
 		  		cel('div',{'class':'prow'},[
 		  			cel('label',{},[
 		  				ctn("VidzBigger "),
-		  				cel('input',{'type':'button','value':'Preferences'})
+		  				cel('input',{'type':'button','value':'Preferences','events':['click',domore]})
 		  			])
 		  		])
 	  		],document.body);
@@ -124,6 +184,6 @@
   	}
   </script>
   <body onload="doit()" style="margin:0px;padding:0px;><pre>
-  Hey, nothing here yet!  Sorry.  Visit YouTube or some other supported site for configuration options which should appear initially in the top right corner of the page.  Right click this icon to easily dissable VidzBigger.  I have plans for this screen but feel free to make a suggestion at <a href="http://vidzbigger.com/contact">vidzbigger.com/contact</a>
+ 		<a href="http://vidzbigger.com/contact">vidzbigger.com/contact</a>
   </pre></body>
 </html>

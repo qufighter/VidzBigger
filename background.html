@@ -3,9 +3,9 @@
     chrome.extension.onRequest.addListener(
 		  function(request, sender, sendResponse) {
 		  	//console.log(request.msgType);//DONT forget about PERMISISONS or the SIZE LIMITE on the returned object, hence we are returnign only the text now
-		  	if( sender.tab ){
+		  	//if( sender.tab ){
 		  		if( request.msgType=="G_xmlhttpRequest" ){
-		  			if(sender.tab.incognito){
+		  			if(sender.tab && sender.tab.incognito){
 		  				sendResponse({responseText:''})
 		  				return;
 		  			}
@@ -28,9 +28,9 @@
 					}else{
 						sendResponse({})
 					}
-		  	}else{
-		  		sendResponse({})
-		  	}
+		  	//}else{
+					//sendResponse({})
+		  	//}
 	  });
   </script>
 </html>
