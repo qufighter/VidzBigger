@@ -2351,7 +2351,7 @@ unwin.p_vidzbShowPrefs=function(){
 			prHTM+=unwin.p_createPrefCheckbox('columnPriorityComments','Comment column First (toggle column order)','In 2 column mode this setting determines if the comment column will be added first or second\\n\\nIn 3 column mode this determines if the comments are on the left or the right.\\n\\nDefault Value: OFF');
 			prHTM+=unwin.p_createPrefCheckbox('columnScrollIndependent','Scroll columns independent of page (experimental)','Also hides the footer \\n\\nBe aware that checking Auto Scroll Past Header causes the page to get tripple scroll bars but larger video and column size in 2 col mode. \\n\\nDefault Value: OFF');
 			prHTM+=unwin.p_createPrefCheckbox('autoScrollPastHeader','Auto Scroll Past Header (bigger video on load)','Jumps the page down past the header on page load which makes the video area as large as possible.\\n\\nThis is a nice option for 2 column mode. \\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen on Scroll <span style="color:red;">(new)</span>','Scroll to the magic spot (happens automatically with auto scroll past header, and you will go fullwindowmaximizedmode otherwise known as double click fullscreen under JSAPI preferences, but this is the shortcut XD  \\n\\nDefault Value: ONN??',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
+			prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
 			if(unwin.snapfullscreenmode){
 				prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at past header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',2);
 				prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  I didnt brand it as to not be full of myself so name it yourself or dont use it';
@@ -3815,7 +3815,7 @@ function performFunkyChecks(){
 				mp.style.display='block';
 				window.setTimeout(function(){
 					if( typeof(mp.playVideo)!='function' ){
-						console.log(' please tell me if you see this at vidzbigger.com/contact.  I think that a chrom bug is causing flash to be the ***** that itis');
+						//console.log(' please tell me if you see this at vidzbigger.com/contact.  I think that a chrom bug is causing flash to be the ***** that itis');
 						unwin.vidzb_apply_selected_fixes();
 					}
 				},550);
