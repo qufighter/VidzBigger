@@ -2354,7 +2354,7 @@ unwin.p_vidzbShowPrefs=function(){
 			prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
 			if(unwin.snapfullscreenmode){
 				prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at past header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',2);
-				prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  I didnt brand it as to not be full of myself so name it yourself or dont use it';
+				//prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  It will probably stop working soon.';
 			}
 			prHTM+='</div>';//end layout hider div
 			
