@@ -2539,7 +2539,7 @@ unwin.p_vidzbShowPrefs=function(){
 		
 		//PLUGZ
 		if(!unwin.shareVideoViewStatistics){
-			prHTM+=unwin.p_beginPrefSectn('me','Enjoying VidzBigger?');
+			prHTM+=unwin.p_beginPrefSectn('me','Support');
 			prHTM+="Do you like VidzBigger?  Me too!  I can't live without it.  If you want to share your love of VidzBigger there are a number of ways you can help!<br/>";
 			prHTM+='&bull; Rate VidzBigger <a target="_blank" href="'+(detectn?'https://chrome.google.com/extensions/detail/mlmmmmbpbfgcklcjoipilgnmemaclcld':'http://userscripts.org/scripts/show/41691')+'">5 Stars</a><br>';
 			if(!detectn)
