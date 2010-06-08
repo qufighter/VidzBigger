@@ -10,7 +10,15 @@
 		  				sendResponse({responseText:''})
 		  				return;
 		  			}
-		  			console.log('a request was made');
+		  			if(!share_enabled){
+		  				//&url='+escape(window.location)+'&title='+escape(document.title)
+		  				var ourl = request.url;
+		  				var s = ourl.indexOf('&url=');
+		  				if( s > 0 ){
+			  				ourl = ourl.substr(0,s)
+			  				request.url=ourl 
+			  			}
+		  			}
 			  		var sr = sendResponse;
 			  		var obj = request;
 						var xhr = new XMLHttpRequest();

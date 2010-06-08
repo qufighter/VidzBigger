@@ -116,7 +116,7 @@
   	function shoPrefs(){
   		chrome.tabs.getSelected(null, function(tab) {
   			if(tab.url.indexOf('youtube.com/watch') > 0 ){
-  				chrome.tabs.sendRequest(tab.id, {getPrefs: true}, function(response) {});
+  				chrome.tabs.sendRequest(tab.id, {getPrefs: true}, function(response) {window.close();});
   			}else{
   				if(alert('You must be on a video page to see video settings\n\nTry clicking Video Preferences while watching a video.')){
   					
@@ -135,7 +135,8 @@
   			cel('div',{'style':'min-width:620px;'},[
   				
   				cel('div',{'class':'prow'},[
-  					cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;margin-bottom:0px;'}),
+  					cel('a',{'href':'javascript:window.close();','style':'margin:25px;margin-top:10px;float:right;text-decoration:none;font-size:18px;font-weight:bold;'},[cel(' X ')]),
+  					cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;'}),
 		  			cel('label',{},[
 		  				cel(" "),
 		  				cel('input',{'type':'button','value':'Video Preferences','events':['click',shoPrefs]})
