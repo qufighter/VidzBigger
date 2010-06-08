@@ -134,9 +134,8 @@ if(new String(navigator.userAgent).indexOf('Chrome/')>0){
 	if(typeof(chrome)!='undefined')chrome.extension.onRequest.addListener(
 	function(request, sender, sendResponse) {
 		if (request.getPrefs)
-	  	sendResponse({prefs:unwin.p_vidzbShowPrefs.toString()});
-	  else
-	  	sendResponse({});
+	  	window.vidzb_showPrefs();
+	  sendResponse({});
 	});
 	
 //	if( window.location.host.indexOf('youtube.com')>0 ){

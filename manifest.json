@@ -6,7 +6,7 @@
       "matches": [ "http://www.youtube.com/watch*", "http://www.youtube.com/user*", "http://www.escapistmagazine.com/*", "http://vimeo.com/*", "http://www.dailymotion.com/*", "http://www.metacafe.com/*", "http://www.hulu.com/*", "http://www.escapistmagazine.com/*" ]
    } ],
    "browser_action": {
-	    "default_icon": "icon16.png",
+	    "default_icon": "icon19.png",
 	    "default_title": "VidzB",
 	    "popup": "popup.html"
 	  },
@@ -19,7 +19,7 @@
            "48": "icon48.png",
           "128": "icon128.png" },
    "permissions": [
-				  "http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
+				  "http://localhost/","http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
 				],
-   "version": "0.0.67.3"
+   "version": "0.0.67.4"
 }

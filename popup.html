@@ -14,15 +14,16 @@
   	function _ge(g){
 			return document.getElementById(g);
 		}
-  	
-  	function ctn(tex){
-  		return document.createTextNode(tex);
-  	}
-  	
+ 
   	//appnedTo should ONLY be specified on the last element that needs to be created
   	//				which means the TOP level element (or the final parameter on the first one)
   	function cel(typ,attributes,addchilds,appnedTo){
-  		var ne=document.createElement(typ);
+  		var ne;
+  		if( typ.indexOf(' ') > -1 ){
+  			ne=document.createTextNode(typ);
+  			return ne;//does anyone set attributs on a text node?
+  		}else
+  			ne=document.createElement(typ);
   		for( i in attributes ){
   			if( i == 'events' ){
   				//if(!pendingListenrs[ne])pendingListenrs[ne]=[];
@@ -49,38 +50,19 @@
   	var pendingListenrs=[];
   	
   	var share_enabled = false;
-  	var murl='http://www.vidzbigger.com/videoSimpleList.php?page='
+  	var murl='http://www.vidzbigger.com/videoSimpleList.php?nonav=1&page='
   	var page=1;
-  	function corretPage(){
-  		var np = page;
-  		var cr = _ge('mainscreen').src
-  		console.log(cr);
-  		if( cr != murl+page ){
-  			np = cr.qslice('page=','&') - 0;
-  			console.log('nepage '+np);
-  			if(np<1)np=page;
-  		}
-  		page=np;
-  	}
+
   	function advance(){
   		_ge('browser').innerHTML="L O A D I N G";
-  		//corretPage();
-  		//_ge('mainscreen').src='loading.html';
   		page++;
-  		window.setTimeout(loadpage,250);
+  		loadBrowserURL();
   	}
   	function devance(){
   		_ge('browser').innerHTML="L O A D I N G";
-  		//corretPage();
-  		//_ge('mainscreen').src='loading.html';
   		page--;
   		if(page<1)page=1;
-  		window.setTimeout(loadpage,250);
-  	}
-  	function loadpage(){
   		loadBrowserURL();
-  		//_ge('mainscreen').src = murl+page;
-  		
   	}
   	function clickedbrowser(ev){
   		t=ev.target;
@@ -96,45 +78,30 @@
   			}
   		}
   	}
-  	function domore(){
+  	function toggleBrowser(){
   		if( !share_enabled ){
   			
+  			_ge('extraline').style.display='';
   			cel('div',{},[
-  			
-	  			//cel('div',{},[
-						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
-						cel('input',{'type':'button','value':'Next Page','events':['click',advance]}),
-					//]),
-	  			
-		  		cel('div',{'style':'min-width:600px;','id':'browser','events':['click',clickedbrowser]},[
-			  				ctn("L O A D I N G"),
-	
-		  		
-		  		
-	//	  			cel('iframe',{'id':'mainscreen','style':'width:550px;height:300px;','src':'loading.html'}),
-	//	  			cel('div',{},[
-	//						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
-	//						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
-	//					])
-		
-		
+					cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
+					cel('input',{'type':'button','value':'Next Page','events':['click',advance]}),
+		  		cel('div',{'style':'width:600px;','id':'browser','events':['click',clickedbrowser]},[
+			  		cel(" L o a d i n g  T o p  V i d e o s"),
 			  	]),
-			  	
-			  	//cel('div',{},[
 						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
-						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})
-					//]),
-		  	
+						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})		  	
 		  	],_ge('viewr'));
 		  	
-				loadBrowserURL()
-		  	
 		  	share_enabled=true;
+		  	
 		  }else{
+		  	_ge('extraline').style.display='none';
 		  	_ge('viewr').removeChild(_ge('viewr').firstChild);
 		  	share_enabled=false;
 		  }
-	  	window.setTimeout(loadpage,250);
+		  localStorage['share_enabled']=share_enabled;
+		  if(share_enabled) loadBrowserURL();
+	  	//window.setTimeout(loadpage,250);
   	}
   	
   	function loadBrowserURL(){
@@ -146,44 +113,64 @@
 	  	});
   	}
   	
+  	function shoPrefs(){
+  		chrome.tabs.getSelected(null, function(tab) {
+  			if(tab.url.indexOf('youtube.com/watch') > 0 ){
+  				chrome.tabs.sendRequest(tab.id, {getPrefs: true}, function(response) {});
+  			}else{
+  				if(alert('You must be on a video page to see video settings\n\nTry clicking Video Preferences while watching a video.')){
+  					
+  				}
+  			}
+  		});
+  	}
+  	
   	function doit(){
   		document.body.removeChild(document.body.firstChild);
   		
-  		//check setting
-  		
-  		
-  		if( share_enabled ){
-  			
-  		}else{
-  			cel('div',{'style':'min-width:200px;'},[
-  				cel('div',{'id':'viewr'},[
+  		//check setting ?value:default
+  		share_enabled = ((localStorage['share_enabled']=='true')?true:false);
+
+
+  			cel('div',{'style':'min-width:620px;'},[
   				
-//cel('iframe',{'id':'mainscreen','style':'width:500px;height:500px;','src':'loading.html'})
-  			
-		  		]),
   				cel('div',{'class':'prow'},[
+  					cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;margin-bottom:0px;'}),
 		  			cel('label',{},[
-		  				cel('input',{'type':'checkbox','events':['click',domore],'checked':share_enabled}),
-		  				ctn("Participate in View Sharing")
+		  				cel(" "),
+		  				cel('input',{'type':'button','value':'Video Preferences','events':['click',shoPrefs]})
+		  			]),
+		  			cel('label',{},[
+		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser],'checked':share_enabled}),
+		  				cel("Participate in Video View Sharing ")
 		  			])
 		  		]),
+		  		cel('hr',{'id':'extraline'}),
+		  		cel('div',{'id':'viewr'},[]),
+  				
 //		  		cel('div',{'class':'prow'},[
 //		  			cel('label',{},[
-//		  				cel('input',{'type':'checkbox','events':['click',domore]}),
-//		  				ctn("Use Encrypted Transmission")
+//		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser]}),
+//		  				cel("Use Encrypted Transmission")
 //		  			])
 //		  		]),
-		  		cel('div',{'class':'prow'},[
-		  			cel('label',{},[
-		  				ctn("VidzBigger "),
-		  				cel('input',{'type':'button','value':'Preferences','events':['click',domore]})
-		  			])
-		  		])
+//		  		cel('div',{'class':'prow'},[
+//		  			cel('label',{},[
+//		  				cel(" "),
+//		  				cel('input',{'type':'button','value':'Video Preferences','events':['click',shoPrefs]})
+//		  			])
+//		  		])
 	  		],document.body);
+
+  		if( share_enabled ){
+  			share_enabled = false;
+  			toggleBrowser();
+  		}else{
+  			_ge('extraline').style.display='none';
   		}
   	}
   </script>
-  <body onload="doit()" style="margin:0px;padding:0px;><pre>
+  <body onload="doit()" style="font-family:futura,arial,sans-serif;font-size:11px;margin:0px;padding:0px;padding-left:1px;overflow-x:hidden;><pre>
  		<a href="http://vidzbigger.com/contact">vidzbigger.com/contact</a>
   </pre></body>
 </html>

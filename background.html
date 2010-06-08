@@ -5,10 +5,12 @@
 		  	//console.log(request.msgType);//DONT forget about PERMISISONS or the SIZE LIMITE on the returned object, hence we are returnign only the text now
 		  	//if( sender.tab ){
 		  		if( request.msgType=="G_xmlhttpRequest" ){
-		  			if(sender.tab && sender.tab.incognito){
+		  			share_enabled = ((localStorage['share_enabled']=='true')?true:false);
+		  			if(!share_enabled && sender.tab && sender.tab.incognito){
 		  				sendResponse({responseText:''})
 		  				return;
 		  			}
+		  			console.log('a request was made');
 			  		var sr = sendResponse;
 			  		var obj = request;
 						var xhr = new XMLHttpRequest();
