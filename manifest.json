@@ -19,7 +19,7 @@
            "48": "icon48.png",
           "128": "icon128.png" },
    "permissions": [
-				  "http://localhost/","http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
+				  "http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
 				],
    "version": "0.0.67.4"
 }
