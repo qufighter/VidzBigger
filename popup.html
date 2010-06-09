@@ -50,9 +50,15 @@
   	var pendingListenrs=[];
   	
   	var share_enabled = false;
+  	var crypt_enabled = false;
   	var murl='http://www.vidzbigger.com/videoSimpleList.php?nonav=1&page='
   	var page=1;
 
+		function advanceto(p){
+  		_ge('browser').innerHTML="L O A D I N G";
+  		page=p;
+  		loadBrowserURL();
+  	}
   	function advance(){
   		_ge('browser').innerHTML="L O A D I N G";
   		page++;
@@ -77,6 +83,14 @@
 	  			});
   			}
   		}
+  	}
+  	function toggleSecure(){
+  		if( !crypt_enabled ){
+  			crypt_enabled=true;
+  		}else{
+  			crypt_enabled=false;
+  		}
+  		localStorage['crypt_enabled']=crypt_enabled;
   	}
   	function toggleBrowser(){
   		if( !share_enabled ){
@@ -130,6 +144,7 @@
   		
   		//check setting ?value:default
   		share_enabled = ((localStorage['share_enabled']=='true')?true:false);
+  		crypt_enabled = ((localStorage['crypt_enabled']=='true')?true:false);
 
 
   			cel('div',{'style':'min-width:620px;'},[
@@ -146,6 +161,10 @@
 		  			cel('label',{},[
 		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser],'checked':share_enabled}),
 		  				cel("Participate in Video View Sharing ")
+		  			]),
+		  			cel('label',{},[
+		  				cel('input',{'type':'checkbox','events':['click',toggleSecure],'checked':crypt_enabled}),
+		  				cel("Encrypt Requests")
 		  			])
 		  		]),
 		  		cel('hr',{'id':'extraline'}),
@@ -153,7 +172,7 @@
   				
 //		  		cel('div',{'class':'prow'},[
 //		  			cel('label',{},[
-//		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser]}),
+//		  				cel('input',{'type':'checkbox','events':['click',toggleSecure],'checked':crypt_enabled}),
 //		  				cel("Use Encrypted Transmission")
 //		  			])
 //		  		]),
