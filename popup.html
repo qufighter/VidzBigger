@@ -106,7 +106,7 @@
   	
   	function loadBrowserURL(){
   		chrome.extension.sendRequest({'url':murl+page,'method':'GET','msgType':"G_xmlhttpRequest"}, function(response){
-	  		if(response.responseText.length > 0 )
+	  		if(response.responseText && response.responseText.length > 0 )
 	  			_ge('browser').innerHTML=response.responseText.qslice('<!--VZB_B-->','<!--VZB_E-->').qreplace('"img/','"http://www.vidzbigger.com/img/');
 	  		else
 	  			_ge('browser').innerHTML='Error - Check internet connection';
