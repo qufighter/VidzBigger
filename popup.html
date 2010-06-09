@@ -51,7 +51,9 @@
   	
   	var share_enabled = false;
   	var crypt_enabled = false;
-  	var murl='http://www.vidzbigger.com/videoSimpleList.php?nonav=1&page='
+   	var color_toggled = false;
+
+  	var murl='http://www.vidzbigger.com/videoSimpleList.php?nonav='+(color_toggled?2:1)+'&page='
   	var page=1;
 
 		function advanceto(p){
@@ -120,12 +122,13 @@
   	}
   	
   	function loadBrowserURL(){
-  		chrome.extension.sendRequest({'url':murl+page,'method':'GET','msgType':"G_xmlhttpRequest"}, function(response){
+  		chrome.extension.sendRequest({'url':murl+(color_toggled?2:1)+'&page='+page,'method':'GET','msgType':"G_xmlhttpRequest"}, function(response){
 	  		if(response.responseText && response.responseText.length > 0 )
 	  			_ge('browser').innerHTML=response.responseText.qslice('<!--VZB_B-->','<!--VZB_E-->').qreplace('"img/','"http://www.vidzbigger.com/img/');
 	  		else
 	  			_ge('browser').innerHTML='Error - Check internet connection';
 	  	});
+	  	localStorage['page']=page;
   	}
   	
   	function shoPrefs(){
@@ -140,19 +143,47 @@
   		});
   	}
   	
+  	var cli=0;
+  	function logoclick(ev){
+  		if(!color_toggled){
+	  		document.body.style.backgroundColor='white';
+				document.body.style.color='black';
+	  		color_toggled=true;
+  		}else{
+				document.body.style.backgroundColor='black';
+				document.body.style.color='white';
+	  		color_toggled=false;
+  		}
+  		localStorage['color_toggled']=color_toggled;
+  		cli++;
+  		if(cli <10)
+  			ev.preventDefault();
+  		if(cli==1)setTimeout(dcli,250);
+  		console.log(cli);
+  	}
+  	function dcli(){
+  		cli--;
+  		if(cli > 0 )setTimeout(dcli,250);
+  	}
+  	
   	function doit(){
   		document.body.removeChild(document.body.firstChild);
   		
   		//check setting ?value:default
   		share_enabled = ((localStorage['share_enabled']=='true')?true:false);
   		crypt_enabled = ((localStorage['crypt_enabled']=='true')?true:false);
+			color_toggled = ((localStorage['color_toggled']=='true')?true:false);
 
-
+	  	murl='http://www.vidzbigger.com/videoSimpleList.php?nonav='
+	  	page=((localStorage['page']-0>1)?localStorage['page']-0:1);
+			
+			//above need nto be in function?
+			
   			cel('div',{'style':'min-width:620px;'},[
   				
   				cel('div',{'class':'prow'},[
   					cel('a',{'href':'javascript:window.close();','style':'margin:25px;margin-top:10px;right:-15px;position:fixed;text-decoration:none;font-size:18px;font-weight:bold;display:block;'},[cel(' X ')]),
-  					cel('a',{'href':'http://www.vidzbigger.com','target':'_blank'},[
+  					cel('a',{'href':'http://www.vidzbigger.com','target':'_blank','events':['click',logoclick]},[
   						cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;','border':'0'}),
   					]),
 		  			cel('label',{},[
