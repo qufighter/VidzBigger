@@ -521,7 +521,7 @@ vsiteInitFun=function(){
 		unwin.watchStrings='watch?';
 		unwin.ids_footer='footer';
 		unwin.ids_downloadLinks='watch-description-body';
-		scriptStyles.push(".watch-module{margin-left:10px;margin-right:4px;}");
+		scriptStyles.push(".watch-module{margin-left:0px;margin-right:4px;}");
 		scriptStyles.push("#watch-player{width:100%;height:100%;}");
 		scriptStyles.push("#watch-comments-actions button{position:relative;top:-20px;}");
 		scriptStyles.push("#watch-discussion .wrapper{padding: 5px 5px 10px 0px;}");
