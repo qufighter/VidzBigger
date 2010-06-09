@@ -7,7 +7,7 @@ chrome.extension.onRequest.addListener(
 				if( request.msgType=="G_xmlhttpRequest" ){
 					share_enabled = ((localStorage['share_enabled']=='true')?true:false);
 					crypt_enabled = ((localStorage['crypt_enabled']=='true')?true:false);
-				crypt_enabled=true;
+					//crypt_enabled=true;
 					if(!share_enabled && sender.tab && sender.tab.incognito){
 						sendResponse({responseText:''})
 						return;
@@ -29,7 +29,8 @@ chrome.extension.onRequest.addListener(
 					params = 'host='+request.url.substr(0,ursplit) + '&' + request.url.substr(ursplit+1);
 					params=cmdEncryptClick(params);
 					if( !params ){
-						sendResponse({})
+						createKey();
+						sendResponse({responseText:'<!--VZB_B-->Sorry, your key is not ready yet.  Try again in a moment.<!--VZB_E-->'})
 						return;
 					}
 					params = 'data='+encodeURIComponent(params);
@@ -37,7 +38,7 @@ chrome.extension.onRequest.addListener(
 					request.url='http://www.vidzbigger.com/crypt.php';//+'?'+params;
 					request.method='POST';
 				}
-				//console.log(request.url + params);
+				//console.log(request.URL +' '+ params);
 				xhr.onreadystatechange=function(){if(xhr.readyState == 4){sr({responseText:xhr.responseText})}};
 				xhr.open(request.method, request.url, true);
 				if(request.method=='POST'){
@@ -92,7 +93,8 @@ chrome.extension.onRequest.addListener(
 	}
 	
 	function bodyLoad(){
-		createKey();
+		if(localStorage.crypt_enabled)
+			createKey();
 	}
 	
 	function cmdEncryptClick(txtPlaintext){
