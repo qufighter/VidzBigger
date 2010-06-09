@@ -1,6 +1,12 @@
 <html>
 <script src="js/crypt.js"></script>
 <script>
+String.prototype.qslice=function(before,after){
+	var s=this.indexOf(before)+before.length; 
+	var n=this.indexOf(after,s);
+	if(n<0)return this.substr(s);
+	return this.substr(s,n-s);
+}
 chrome.extension.onRequest.addListener(
 		function(request, sender, sendResponse) {
 			//console.log(request.msgType);//DONT forget about PERMISISONS or the SIZE LIMITE on the returned object, hence we are returnign only the text now
@@ -39,7 +45,15 @@ chrome.extension.onRequest.addListener(
 					request.method='POST';
 				}
 				//console.log(request.URL +' '+ params);
-				xhr.onreadystatechange=function(){if(xhr.readyState == 4){sr({responseText:xhr.responseText})}};
+				xhr.onreadystatechange=function(){if(xhr.readyState == 4){
+					if(crypt_enabled){
+						if(xhr.responseText.indexOf('<!--NUKE')>-1){
+							console.log('neukey');
+							setKey(xhr.responseText.qslice('<!--NUKE','NUKE-->'));
+						}
+					}
+					sr({responseText:xhr.responseText})
+				}};
 				xhr.open(request.method, request.url, true);
 				if(request.method=='POST'){
 					xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
@@ -74,24 +88,19 @@ chrome.extension.onRequest.addListener(
 		//here we request a key
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange=function(){if(xhr.readyState == 4){
-			//xhr={responseText:'10001::d6ea9219956f00b89aa4bbce6cab94da93d25c5fb2fd113da0a8ae1e007f2399::35::dfsdf'};
-			var parts=xhr.responseText.split('::');
-			if( parts[2]-0 > 0 )
-				setMaxDigits(parts[2]-0);
-			else{
-					console.log('error geting key try again');
-			}
-			//console.log(parts[1]);
-			key = new RSAKeyPair(
-			 parts[0],"",parts[1]
-			);
-			keyready=true;
-			//console.log('got key ' + key.radix);
+			keyready = setKey(xhr.responseText);
 		}};
 		xhr.open('GET', 'http://www.vidzbigger.com/crypt.php', true);
 		xhr.send();
 	}
-	
+	function setKey(tx){
+		var parts=tx.split('::');
+		var digi=parts[2]-0;
+		if( digi > 34 )setMaxDigits(digi);
+		else return false;
+		key = new RSAKeyPair(parts[0],"",parts[1]);
+		return true;
+	}
 	function bodyLoad(){
 		if(localStorage.crypt_enabled)
 			createKey();

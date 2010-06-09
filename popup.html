@@ -94,7 +94,7 @@
   	}
   	function toggleBrowser(){
   		if( !share_enabled ){
-  			
+  			_ge('enc_check').style.display='';
   			_ge('extraline').style.display='';
   			cel('div',{},[
 					cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
@@ -109,6 +109,7 @@
 		  	share_enabled=true;
 		  	
 		  }else{
+		  	_ge('enc_check').style.display='none';
 		  	_ge('extraline').style.display='none';
 		  	_ge('viewr').removeChild(_ge('viewr').firstChild);
 		  	share_enabled=false;
@@ -162,7 +163,7 @@
 		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser],'checked':share_enabled}),
 		  				cel("Participate in Video View Sharing ")
 		  			]),
-		  			cel('label',{},[
+		  			cel('label',{'id':'enc_check'},[
 		  				cel('input',{'type':'checkbox','events':['click',toggleSecure],'checked':crypt_enabled}),
 		  				cel("Encrypt Requests")
 		  			])
@@ -189,6 +190,7 @@
   			toggleBrowser();
   		}else{
   			_ge('extraline').style.display='none';
+  			_ge('enc_check').style.display='none';
   		}
   	}
   </script>
