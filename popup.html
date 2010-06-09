@@ -135,8 +135,10 @@
   			cel('div',{'style':'min-width:620px;'},[
   				
   				cel('div',{'class':'prow'},[
-  					cel('a',{'href':'javascript:window.close();','style':'margin:25px;margin-top:10px;float:right;text-decoration:none;font-size:18px;font-weight:bold;'},[cel(' X ')]),
-  					cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;'}),
+  					cel('a',{'href':'javascript:window.close();','style':'margin:25px;margin-top:10px;right:-15px;position:fixed;text-decoration:none;font-size:18px;font-weight:bold;display:block;'},[cel(' X ')]),
+  					cel('a',{'href':'http://www.vidzbigger.com','target':'_blank'},[
+  						cel('img',{'src':'icon48.png','align':'middle','style':'margin:5px;','border':'0'}),
+  					]),
 		  			cel('label',{},[
 		  				cel(" "),
 		  				cel('input',{'type':'button','value':'Video Preferences','events':['click',shoPrefs]})
