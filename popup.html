@@ -5,7 +5,9 @@
 			return this.split(qsearch).join(qreplace);
 		};
   	String.prototype.qslice=function(before,after){
-			var s=this.indexOf(before)+before.length; 
+			var s=this.indexOf(before)
+			//if(s<0)return this;
+			s+=before.length;
 			var n=this.indexOf(after,s);
 			if(n<0)return this.substr(s);
 			return this.substr(s,n-s);
@@ -57,17 +59,14 @@
   	var page=1;
 
 		function advanceto(p){
-  		_ge('browser').innerHTML="L O A D I N G";
   		page=p;
   		loadBrowserURL();
   	}
   	function advance(){
-  		_ge('browser').innerHTML="L O A D I N G";
   		page++;
   		loadBrowserURL();
   	}
   	function devance(){
-  		_ge('browser').innerHTML="L O A D I N G";
   		page--;
   		if(page<1)page=1;
   		loadBrowserURL();
@@ -102,7 +101,8 @@
 					cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
 					cel('input',{'type':'button','value':'Next Page','events':['click',advance]}),
 		  		cel('div',{'style':'width:600px;','id':'browser','events':['click',clickedbrowser]},[
-			  		cel(" L o a d i n g  T o p  V i d e o s"),
+	//	  			cel("img",{'src':'loading.gif'}),
+	//		  		cel(" L o a d i n g  T o p  V i d e o s"),
 			  	]),
 						cel('input',{'type':'button','value':'Last Page','events':['click',devance]}),
 						cel('input',{'type':'button','value':'Next Page','events':['click',advance]})		  	
@@ -122,11 +122,12 @@
   	}
   	
   	function loadBrowserURL(){
+  		_ge('browser').innerHTML='<a href="javascript:loadBrowserURL();">Retry</a> <img align="middle" src="loading.gif" /> L O A D I N G';
   		chrome.extension.sendRequest({'url':murl+(color_toggled?2:1)+'&page='+page,'method':'GET','msgType':"G_xmlhttpRequest"}, function(response){
 	  		if(response.responseText && response.responseText.length > 0 )
 	  			_ge('browser').innerHTML=response.responseText.qslice('<!--VZB_B-->','<!--VZB_E-->').qreplace('"img/','"http://www.vidzbigger.com/img/');
 	  		else
-	  			_ge('browser').innerHTML='Error - Check internet connection';
+	  			_ge('browser').innerHTML='Error - Check internet connection <a href="javascript:loadBrowserURL();">Retry</a>';
 	  	});
 	  	localStorage['page']=page;
   	}
@@ -188,13 +189,13 @@
   					]),
 		  			cel('label',{},[
 		  				cel(" "),
-		  				cel('input',{'type':'button','value':'Video Preferences','events':['click',shoPrefs]})
+		  				cel('input',{'type':'button','value':'Video Preferences','title':'If you\'re watching a video, you can adjust settings using this button','events':['click',shoPrefs]})
 		  			]),
-		  			cel('label',{},[
+		  			cel('label',{'title':'When a video gets extremely popular in the VidzBigger community (10+ views worldwide), it will make the list of top videos for the everyone to enjoy.'},[
 		  				cel('input',{'type':'checkbox','events':['click',toggleBrowser],'checked':share_enabled}),
 		  				cel("Participate in Video View Sharing ")
 		  			]),
-		  			cel('label',{'id':'enc_check'},[
+		  			cel('label',{'id':'enc_check','title':'256 Bit RSA Encryption of all data transmitted to vidzbigger.com, including the URL and title of each video you share.'},[
 		  				cel('input',{'type':'checkbox','events':['click',toggleSecure],'checked':crypt_enabled}),
 		  				cel("Encrypt Requests")
 		  			])

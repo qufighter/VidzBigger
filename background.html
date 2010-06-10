@@ -36,7 +36,7 @@ chrome.extension.onRequest.addListener(
 					params=cmdEncryptClick(params);
 					if( !params ){
 						createKey();
-						sendResponse({responseText:'<!--VZB_B-->Sorry, your key is not ready yet.  Try again in a moment.<!--VZB_E-->'})
+						sendResponse({responseText:'<!--VZB_B-->Sorry, your key is not ready yet.  Try again in a moment. <a href="javascript:loadBrowserURL();">Retry</a><!--VZB_E-->'})
 						return;
 					}
 					params = 'data='+encodeURIComponent(params);
@@ -44,12 +44,15 @@ chrome.extension.onRequest.addListener(
 					request.url='http://www.vidzbigger.com/crypt.php';//+'?'+params;
 					request.method='POST';
 				}
-				//console.log(request.URL +' '+ params);
+				//console.log(request.url +' '+ params);
 				xhr.onreadystatechange=function(){if(xhr.readyState == 4){
 					if(crypt_enabled){
 						if(xhr.responseText.indexOf('<!--NUKE')>-1){
-							console.log('neukey');
 							setKey(xhr.responseText.qslice('<!--NUKE','NUKE-->'));
+						}else if(xhr.responseText.indexOf('_B--><!--VZB_E') > 0){
+							createKey();
+							sendResponse({responseText:'<!--VZB_B-->Sorry, your key is expired.  Try again in a moment. <a href="javascript:loadBrowserURL();">Retry</a><!--VZB_E-->'})
+							return;
 						}
 					}
 					sr({responseText:xhr.responseText})
@@ -78,8 +81,9 @@ chrome.extension.onRequest.addListener(
 			//sendResponse({})
 		//}
 	});
-	var key,keyready=false;
+	var key,keyready=false,busy=false;
 	function createKey(){
+		if(busy)return;
 		if( typeof(setMaxDigits) != 'function' ){
 			localStorage.crypt_enabled=false;
 			return;
@@ -91,11 +95,13 @@ chrome.extension.onRequest.addListener(
 			keyready = setKey(xhr.responseText);
 		}};
 		xhr.open('GET', 'http://www.vidzbigger.com/crypt.php', true);
+		busy=true;
 		xhr.send();
 	}
 	function setKey(tx){
 		var parts=tx.split('::');
 		var digi=parts[2]-0;
+		busy=false;
 		if( digi > 34 )setMaxDigits(digi);
 		else return false;
 		key = new RSAKeyPair(parts[0],"",parts[1]);
