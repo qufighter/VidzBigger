@@ -46,7 +46,7 @@
 //******************************************************************************//
 
 //function alll(){
-var vidz_Version=0.068;
+var vidz_Version=0.069;
 var startTime=new Date().getTime();
 var vFlashVars="";
 var detectn=false;
@@ -419,7 +419,6 @@ function addStylesArray(scriptStyles){
 //		unwin.getElementByClassNameAndAssignID(_vt('titlebar'),'titlebar-title','titlebar-title');
 //		unwin.ids_all_holder_hide='baseDiv';
 //		unwin.ids_video_holder='player';
-//		unwin.ids_video_positioner='player';
 //		unwin.ids_left_column='top-pane';
 //		//unwin.ids_left_column2='tv-related';
 //		unwin.ids_right_column='bottom-pane';
@@ -444,7 +443,6 @@ function addStylesArray(scriptStyles){
 //		//http://video.google.com/videosearch?q=cool+videos&hl=en&emb=0&aq=f#	
 //		unwin.ids_all_holder_hide='baseDiv';
 //		unwin.ids_video_holder='iplay-embed-container';
-//		unwin.ids_video_positioner='iplay-embed';
 //		unwin.ids_left_column='search-results';
 //		//unwin.ids_left_column2='iplay-container';
 //		unwin.ids_right_column='iplay-container';
@@ -473,7 +471,6 @@ function addStylesArray(scriptStyles){
 //		unwin.getElementByClassNameAndAssignID(_vt('hotstuff'),'metadata','right1');
 //		unwin.ids_all_holder_hide='baseDiv';
 //		unwin.ids_video_holder='hs_player';
-//		unwin.ids_video_positioner='hs_player';
 //		unwin.ids_left_column='thumbnail_grid';
 //		unwin.ids_right_column='right1';
 //		unwin.ids_right_column2='recommended-pane';
@@ -515,7 +512,6 @@ vsiteInitFun=function(){
 		unwin.ids_header='masthead';
 		unwin.ids_title='watch-headline';
 		unwin.ids_video_holder='watch-player';
-		unwin.ids_video_positioner='watch-player';
 		unwin.ids_left_column='watch-panel';
 		unwin.ids_right_column='watch-sidebar';
 		unwin.watchStrings='watch?';
@@ -532,7 +528,6 @@ vsiteInitFun=function(){
 		//cursory featherlight support....  i guess should be loaded enough to tell by now .. 
 		//if(typeof(VM_ClearStyles)!='undefined')
 		unwin.ids_video_holder='p';
-		unwin.ids_video_positioner='p';
 		unwin.ids_left_column='cm';
 		unwin.ids_right_column='rc';
 		unwin.ids_title='ct';
@@ -549,13 +544,12 @@ vsiteInitFun=function(){
 		scriptStyles.push(".master-sprite watch-comment-down-hover{display:none;}");
 		scriptStyles.push(".master-sprite watch-comment-up-hover{display:none;}");
 	}else{
-		unwin.ids_all_holder_hide='baseDiv';
-		unwin.ids_video_holder='watch-player-div';
-		unwin.ids_video_positioner='watch-this-vid';
-		unwin.ids_left_column='watch-this-vid-info';
-		unwin.ids_right_column='watch-other-vids';
-		unwin.ids_title='watch-vid-title';
-		unwin.ids_header='masthead';
+		unwin.ids_all_holder_hide='page';
+		unwin.ids_video_holder='watch-player';
+		unwin.ids_left_column='watch-panel';
+		unwin.ids_right_column='watch-sidebar';
+		unwin.ids_title='watch-headline';
+		unwin.ids_header='pagetop';
 		unwin.ids_footer='footer';
 		//unwin.ids_footer2='copyright';
 		unwin.ids_downloadLinks='watch-video-details-inner';
@@ -615,7 +609,6 @@ vsiteInitFun=function(){
 vsiteInitFun=function(){
 	unwin.siteID=2;
 	unwin.ids_video_holder='video_player';
-	unwin.ids_video_positioner='video_player';
 	unwin.ids_left_column='content';
 	unwin.ids_right_column='right_column';
 	unwin.ids_title='video_detail_header';
@@ -654,7 +647,6 @@ vsiteInitFun=function(){
 //	unwin.getElementByClassNameAndAssignID(document.body,'fluid footer','dm_footer2',1);
 //	//http://www.hulu.com/watch/63877/family-guy-fox-y-lady
 //	unwin.ids_video_holder='player-container';
-//	unwin.ids_video_positioner='player-container';
 //	unwin.ids_left_column='show-and-watch-container';
 //	unwin.ids_right_column='description-container';
 //	unwin.ids_right_column2='id_rightcol';
@@ -724,7 +716,6 @@ vsiteInitFun=function(){
 	//unwin.getElementByClassNameAndAssignID(_vt('id_box_content'),'box_header','id_box_header_2');
 	//if(_vt('videodiv_holder')) $g('videodiv_holder').firstChild.id='just_videodiv_holder';
 	unwin.ids_video_holder='videodiv_holder';
-	unwin.ids_video_positioner='videodiv_holder';
 	unwin.ids_left_column='id_leftcol';
 	unwin.ids_right_column='right_content_box';
 	unwin.ids_title='id_box_header';
@@ -749,7 +740,6 @@ vsiteInitFun=function(){
 }else if(wUrl.indexOf('metacafe.')>0){
 vsiteInitFun=function(){
 	unwin.ids_video_holder='adaptvDiv';
-	unwin.ids_video_positioner='adaptvDiv';
 	unwin.ids_left_column='AfterPlayer';
 	unwin.ids_right_column='SideCol';
 	unwin.ids_title='ItemContainer';
@@ -784,7 +774,6 @@ vsiteInitFun=function(){
 		var vidHolderId=$g('vid').childNodes[2].id;
 	}
 	unwin.ids_video_holder=vidHolderId;//'vid' //kills download link :/
-	unwin.ids_video_positioner=vidHolderId;
 	unwin.ids_left_column='c_l';
 	unwin.ids_right_column='c_r';
 	unwin.ids_title='s_hd';
@@ -801,7 +790,6 @@ vsiteInitFun=function(){
 }else if(wUrl.indexOf('putfile.')>0){
 vsiteInitFun=function(){
 	unwin.ids_video_holder='vid';
-	unwin.ids_video_positioner='vid';
 	unwin.ids_left_column='c_l';
 	unwin.ids_right_column='c_r';//these are classes no ids what a pain
 	unwin.ids_title='s_hd';
@@ -814,7 +802,6 @@ vsiteInitFun=function(){
 vsiteInitFun=function(){
 	unwin.videoitselfchildNodenumber=3;
 	unwin.ids_video_holder='video_player';
-	unwin.ids_video_positioner='video_player';
 	unwin.ids_left_column='MetaPanel';
 	unwin.ids_right_column='ContentPanel';
 	unwin.ids_title='EpisodeTitle';
@@ -831,7 +818,6 @@ vsiteInitFun=function(){
 	unwin.getElementByClassNameAndAssignID(document.body,'pnp_rt','id_pnp_rt');
 	unwin.getElementByClassNameAndAssignID(document.body,'adcont','adcont');
 	unwin.ids_video_holder='videoPlayerComponent';
-	unwin.ids_video_positioner='videoPlayerComponent';
 	unwin.ids_left_column='id_pnp_lf1';
 	unwin.ids_right_column='id_pnp_rt';
 	unwin.ids_title='bcau';
@@ -850,7 +836,6 @@ vsiteInitFun=function(){
 	}
 	if(_vt('video_desc')) $g('video_desc').parentNode.id='id_right_column';
 	unwin.ids_video_holder='defaultDiv';
-	unwin.ids_video_positioner='defaultDiv';
 	unwin.ids_left_column='id_left_column';//'video_wrap:::PARENTNODE';//attempt at dom travel notation
 	unwin.ids_right_column='id_right_column';//'video_desc:::PARENTNODE';
 	unwin.ids_title='id_vidtitle';			//'video_wrap:::PARENTNODE:::FIRSTCHILD';//what a table mess forget it
@@ -867,7 +852,6 @@ vsiteInitFun=function(){
 vsiteInitFun=function(){
 	unwin.videoitselfchildNodenumber=2;
 	unwin.ids_video_holder='video_holder';
-	unwin.ids_video_positioner='video_holder';
 	unwin.ids_left_column='sidebar';
 	unwin.ids_right_column='video_tabs';
 	unwin.ids_title='onn_nav';
@@ -1217,6 +1201,7 @@ unwin.vidzb_apply_selected_fixes=function(){
 			unwin.fssnapHeight=th;
 		}else if (unwin.aspheadersnapfull && (!unwin.fullscreenmode || unwin.fssnapHeight==th)){
 			unwin.fssnapHeight=unwin.headerHeight-10;
+			document.body.style.minHeight="0px";//erm..
 		}
 	}
 		
@@ -1241,10 +1226,9 @@ unwin.vidzb_apply_selected_fixes=function(){
 		}
 	}
 	
-	if( !unwin.fullscreenmode ){
-		document.body.style.height="auto";
-		document.body.style.minHeight="0px";//erm..
-	}
+//	if( !unwin.fullscreenmode ){
+//		document.body.style.height="auto";
+//	}
 	
 	// THIS is independent col scrolling part 1
 	if(unwin.needsFurtherUpdate){ 		
@@ -1859,6 +1843,10 @@ unwin.videoPlayerItself=false;
 unwin.html5mode=false;
 unwin.searchVideoPlayer=function(startNode){
 	if(unwin.videoPlayerItself)return unwin.videoPlayerItself;
+	if(unwin.siteID==1){
+		unwin.videoPlayerItself=startNode;
+		return startNode;//because embed element has 100% width and height...
+	}
 	var cn=startNode.childNodes;
 	for(var i in cn){
 		if(cn[i].nodeName=="OBJECT"||cn[i].nodeName=="EMBED"||cn[i].tagName=="VIDEO"){
