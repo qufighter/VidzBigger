@@ -3339,7 +3339,7 @@ function selChangeVideoFormat(evt){
 			//setFlashVar("start",Math.floor(uwPlayer.getCurrentTime()),false);
 			//console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
 			setFlashVar("fmt_map",videoFormatDetails.fmt_map+(videoFormatDetails.fmt_map?','+ovformat:''),true);
-			console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
+			//console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
 			videoFormat=selNewValue;
 			MIMEString=videoFormatDetails.MIMEString;
 		}
