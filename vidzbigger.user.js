@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           VidzBigger new
+// @name           VidzBigger
 // @namespace      http://vidzbigger.com
 // @description   Automatically Scale YouTube Video to Largest Possible Size Scroll down to read comments without missing video 
 // @include       http://www.youtube.com/*
