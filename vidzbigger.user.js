@@ -516,7 +516,7 @@ vsiteInitFun=function(){
 		unwin.ids_right_column='watch-sidebar';
 		unwin.watchStrings='watch?';
 		unwin.ids_footer='footer';
-		unwin.ids_downloadLinks='watch-description-body';
+		unwin.ids_downloadLinks='watch-info';
 		scriptStyles.push(".watch-module{margin-left:0px;margin-right:4px;}");
 		scriptStyles.push("#watch-player{width:100%;height:100%;}");
 		scriptStyles.push("#watch-sidebar{margin-top:0px;}");
@@ -552,7 +552,7 @@ vsiteInitFun=function(){
 		unwin.ids_header='pagetop';
 		unwin.ids_footer='footer';
 		//unwin.ids_footer2='copyright';
-		unwin.ids_downloadLinks='watch-video-details-inner';
+		unwin.ids_downloadLinks='watch-info';
 		unwin.watchStrings='watch?';
 		
 		scriptStyles.push(".video-mini-title{max-height:none}");
@@ -3039,27 +3039,27 @@ function deleteFlashVar(varName,doReloadPlayer){
 function getVideoFormatDetails(vFormat){//awesome
 	var sFmt,sVq,sMIME,iQI;// iQI is a internal "quality index" used to order the video formats according to its expected quality (higher is better)
 	var unknownFormat=false;
-	switch(vFormat-0){
+	switch(vFormat-0){//22/1280x720/9/0/115,35/854x480/9/0/115,34/640x360/9/0/115,5/320x240/7/0/0
 		case 0:// FLV Low Quality format
 			sVq="1";sFmt="";sMIME="video/x-flv";iQI=1;break;
 		case 5:// FLV Mid Quality format
-			sVq="2";sFmt="5/0/7/0/0";sMIME="video/x-flv";iQI=2;break;
+			sVq="2";sFmt="5/320x240/7/0/0";sMIME="video/x-flv";iQI=2;break;
 		case 6:// FLV High Quality format
-			sVq="2";sFmt="6/720000/7/0/0";sMIME="video/x-flv";iQI=3;break;
+			sVq="2";sFmt="6/320x240/7/0/0";sMIME="video/x-flv";iQI=3;break;
 		case 13:// 3GP LOW Quality format
 			sVq="2";sFmt="13/720000/7/0/0";sMIME="video/3gpp";iQI=3;break;
 		case 17:// 3GP High Quality format
 			sVq="2";sFmt="17/720000/7/0/0";sMIME="video/3gpp";iQI=3;break;
 		case 18:// MPEG-4 H.264 format
-			sVq="2";sFmt="18/512000/9/0/115";sMIME="video/mp4";iQI=5;break;
+			sVq="2";sFmt="18/640x360/9/0/115";sMIME="video/mp4";iQI=5;break;
 		case 22:// MPEG-4 H.264 HQ format
-			sVq="2";sFmt="22/2000000/9/0/115";sMIME="video/mp4";iQI=7;break;
+			sVq="2";sFmt="22/1280x720/9/0/115";sMIME="video/mp4";iQI=7;break;
 		case 34:
-			sVq="2";sFmt="34/0/9/0/115";sMIME="video/mp4";iQI=4;break;
+			sVq="2";sFmt="34/640x360/9/0/115";sMIME="video/mp4";iQI=4;break;
 		case 35:
-			sVq="2";sFmt="35/640000/9/0/115";sMIME="video/mp4";iQI=6;break;
+			sVq="2";sFmt="35/854x480/9/0/115";sMIME="video/mp4";iQI=6;break;
 		case 37:
-			sVq="2";sFmt="37/4000000/9/0/115";sMIME="video/mp4";iQI=8;break;
+			sVq="2";sFmt="37/1920x1080/9/0/115";sMIME="video/mp4";iQI=8;break;
 		default:// Unknown format
 			unknownFormat=true;break;
 	}
@@ -3332,7 +3332,9 @@ function selChangeVideoFormat(evt){
 			//var player=_vt("movie_player");var uwPlayer=getJSobj(player);
 			setFlashVar("vq",videoFormatDetails.vq,false);
 			//setFlashVar("start",Math.floor(uwPlayer.getCurrentTime()),false);
+			console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
 			setFlashVar("fmt_map",videoFormatDetails.fmt_map,true);
+			console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
 			videoFormat=selNewValue;
 			MIMEString=videoFormatDetails.MIMEString;
 		}
