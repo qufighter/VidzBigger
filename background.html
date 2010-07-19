@@ -1,5 +1,5 @@
 <html>
-<script src="js/crypt.js"></script>
+<script src="crypt.js"></script>
 <script>
 String.prototype.qslice=function(before,after){
 	var s=this.indexOf(before)+before.length; 
@@ -32,11 +32,12 @@ chrome.extension.onRequest.addListener(
 				var params = null;
 				if(crypt_enabled && request.url.indexOf('www.vidzbigger.com'>0)){
 					var ursplit=request.url.indexOf('?');
-					params = 'host='+request.url.substr(0,ursplit) + '&' + request.url.substr(ursplit+1);
+					if(ursplit==-1)params = 'host='+request.url;
+					else params = 'host='+request.url.substr(0,ursplit) + '&' + request.url.substr(ursplit+1);
 					params=cmdEncryptClick(params);
 					if( !params ){
 						createKey();
-						sendResponse({responseText:'<!--VZB_B-->Sorry, your key is not ready yet.  Try again in a moment. <a href="javascript:loadBrowserURL();">Retry</a><!--VZB_E-->'})
+						sendResponse({responseText:'<!--VZB_B-->Sorry, your key is not ready yet.  Try again in a moment. <a href="javascript:retryloadBrowserURL();">Retry</a><!--VZB_E-->'})
 						return;
 					}
 					params = 'data='+encodeURIComponent(params);
@@ -51,7 +52,7 @@ chrome.extension.onRequest.addListener(
 							setKey(xhr.responseText.qslice('<!--NUKE','NUKE-->'));
 						}else if(xhr.responseText.indexOf('_B--><!--VZB_E') > 0){
 							createKey();
-							sendResponse({responseText:'<!--VZB_B-->Sorry, your key is expired.  Try again in a moment. <a href="javascript:loadBrowserURL();">Retry</a><!--VZB_E-->'})
+							sendResponse({responseText:'<!--VZB_B-->Sorry, your key is expired.  Try again in a moment. <a href="javascript:retryloadBrowserURL();">Retry</a><!--VZB_E-->'})
 							return;
 						}
 					}
