@@ -1,5 +1,5 @@
 // ==UserScript==
-// @name           VidzBigger
+// @name           VidzBigger new
 // @namespace      http://vidzbigger.com
 // @description   Automatically Scale YouTube Video to Largest Possible Size Scroll down to read comments without missing video 
 // @include       http://www.youtube.com/*
@@ -45,8 +45,7 @@
 //*******************************************************************************//
 //******************************************************************************//
 
-//function alll(){
-var vidz_Version=0.069;
+var vidz_Version=0.070;
 var startTime=new Date().getTime();
 var vFlashVars="";
 var detectn=false;
@@ -2896,13 +2895,14 @@ function setFlashVar(varName,varNewValue,doReloadPlayer,skipEscape){
 	// Gets varName value now and the flashvars from the player
 	var varValue=getFlashVar(varName);
 	var flashVars=String(player.getAttribute("flashvars"));
+	//console.log(varName + ' ' + varValue + ' ' +varNewValue+ ' ' +typeof(flashVars));
 	// If varName isn't set,just adds it
 	// If varName is set,replaces its value with varNewValue
 	if (varValue===null){
 		player.setAttribute("flashvars",flashVars+"&"+varName+"="+varNewValue);
 	}
 	else{
-		var replaceRE=new RegExp("(^|&)"+varName+"="+varValue);
+		var replaceRE=new RegExp("(^|&)"+varName+"=[^&]*");
 		flashVars=flashVars.replace(replaceRE,"$1"+varName+"="+varNewValue);
 		player.setAttribute("flashvars",flashVars);
 	}
@@ -3133,7 +3133,7 @@ function selGetOptionsFromValue(selNode,optValue,singleNode){
 }
 // Gets the YouTube base URL,the video download URL and the MIMEString
 //MOVED TO TOP... before doc-start
-var videoId,tId,ytHost,videoFormatMatch,videoFormat,ovformat,videoFormats,videoURL,selVideoFormat,defaultVideoFormat,defaultVideoFormatInt;
+var videoId,tId,ytHost,videoFormatMatch,videoFormat,ovformat,videoFormats,videoURL,autoVformat,selVideoFormat,defaultVideoFormat,defaultVideoFormatInt;
 defaultVideoFormat=GM_getValue("defaultVideoFormat","0");//hmm...
 function preYousableSetup(){
 	if(typeof(videoId)!='undefined')return;
@@ -3143,11 +3143,16 @@ function preYousableSetup(){
 	ytHost=window.location.protocol+"//"+window.location.host;
 	videoFormatMatch=null
 	videoFormat=getFlashVar("fmt_map");
-	//alert('vf:'+videoFormat)
+	//alert('vf:'+videoFormat)//35/854x480/9/0/115,34/640x360/9/0/115,5/320x240/7/0/0
 	//alert('vf:'+unescape(videoFormat));
 	ovformat=videoFormat;
 	
-	if (videoFormat !==undefined && videoFormat !==null) videoFormatMatch=videoFormat.match(/^(\d+)(?:\/\d+){4}(?:,|$)/);
+	if (videoFormat !==undefined && videoFormat !==null) {
+		//videoFormatMatch=videoFormat.match(/^(\d+)(?:\/\d+){5}(?:,|$)/);
+		videoFormatMatch = (','+videoFormat).match(/(,)(\d+)(\/)/g).toString();
+		videoFormatMatch = videoFormatMatch.match(/(\d+)/g);
+		autoVformat = videoFormatMatch[0]
+	}
 	if ((videoFormat===null) || (videoFormatMatch===null)){
 		// Video is LQ (its fmt_map isn't set or doesn't match the regex)
 		videoFormat="";
@@ -3166,15 +3171,15 @@ function initialYousableSetup(){
 	unwin.hqLoaded=false;
 	unwin.gFormatBestAvail=0;//?
 	if(unwin.siteID==1&&videoFormats!=undefined){
-		if(tvfmt!=null&&!unwin['l0pQualz'+videoFormats[2]]){
+		if(videoFormats!=null){//&&!unwin['l0pQualz'+videoFormats[0]]
 			var tvfmt=ovformat.split(',');
 			for( i in tvfmt ){
 				for( z in lOpPosQualities ){
 					z=lOpPosQualities[z];
 					if( unwin['l0pQualz'+z] ){// if its enabled
 						if( tvfmt[i].indexOf(z) == 0 ){
-							videoFormats[2]=z;
-							//console.log('selecting format '+z);
+							autoVformat=z;
+							console.log('selecting format '+z);
 							tvfmt=false;
 							break;
 						}
@@ -3182,12 +3187,12 @@ function initialYousableSetup(){
 				}if(!tvfmt)break;//found it already
 			}
 		}
-		if( unwin['l0pQualz'+videoFormats[2]] && lOpDisplayQualities[videoFormats[2]] ){ 
-			fmtDetail=getVideoFormatDetails(videoFormats[2]);
+		if( unwin['l0pQualz'+autoVformat] && lOpDisplayQualities[autoVformat] ){ 
+			fmtDetail=getVideoFormatDetails(autoVformat);
 			unwin.gFormatBestAvail=fmtDetail.iQI  //secondary IntQ uh..
-			//unwin.gFormatBestAvail=new Number(videoFormats[2]);
+			//unwin.gFormatBestAvail=new Number(autoVformat);
 			if(unwin.LoadHighQuality){
-				var evt={};evt.target={};evt.target.value=videoFormats[2];
+				var evt={};evt.target={};evt.target.value=autoVformat;
 				selChangeVideoFormat(evt);
 				unwin.hqLoaded=true;
 			}
@@ -3242,7 +3247,7 @@ function videoDownloadLinks(){  //lovely
 			
 			
 			var fmt=videoFormat
-			if(videoFormats!=undefined)fmt=videoFormats[2];
+			if(videoFormats!=undefined)fmt=autoVformat;
 			
 			var optVideoFormatCurrent=selGetOptionsFromValue(selVideoFormat,fmt,true);
 			if (optVideoFormatCurrent===null){
@@ -3332,8 +3337,8 @@ function selChangeVideoFormat(evt){
 			//var player=_vt("movie_player");var uwPlayer=getJSobj(player);
 			setFlashVar("vq",videoFormatDetails.vq,false);
 			//setFlashVar("start",Math.floor(uwPlayer.getCurrentTime()),false);
-			console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
-			setFlashVar("fmt_map",videoFormatDetails.fmt_map,true);
+			//console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
+			setFlashVar("fmt_map",videoFormatDetails.fmt_map+(videoFormatDetails.fmt_map?','+ovformat:''),true);
 			console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
 			videoFormat=selNewValue;
 			MIMEString=videoFormatDetails.MIMEString;
@@ -4348,16 +4353,3 @@ function testReadyToVidzBig(){
 		}
 	}
 }
-//if(_vt(unwin.ids_title)){
-//	$g(unwin.ids_title).focus();
-//	window.setTimeout(function(){unwin.fireMouseEvent($g(unwin.ids_title),'click')},10);
-//}
-//DEBUG ONLY CODE should not exist... but as long as they are all commented out,this should be fine...
-//if(unwin.occuranceTestMonitor>=1){
-//	window.setTimeout(function(){alert('OCM:'+unwin.occuranceTestMonitor)},4000);
-//}
-//}
-//alll();
-//window.addEventListener('unload',function(){
-//	alll=null;//apples!
-//},false)
