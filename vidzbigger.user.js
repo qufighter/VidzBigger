@@ -25,7 +25,6 @@
 // @exclude       http://*youtube.tld/my*
 // @exclude       http://*youtube.tld/watch_popup*
 // @exclude       http://*digg.com/tools*
-// @run-at document-start
 // ==/UserScript==  
 	
 ////*****************************************************************************///
@@ -554,6 +553,7 @@ vsiteInitFun=function(){
 		unwin.ids_downloadLinks='watch-info';
 		unwin.watchStrings='watch?';
 		
+		scriptStyles.push("#watch-description-body{max-width:"+(unwin.colWidth-138)+"px;}");
 		scriptStyles.push(".video-mini-title{max-height:none}");
 		scriptStyles.push("#watch-longform-buttons{top:0px;z-index:999;position:absolute;right:10px;}");
 		scriptStyles.push("#annotations-toggle-switch{display:inline;z-index:999;}");
@@ -933,6 +933,8 @@ var vidzbigSITESdisabled='';
 
 //global 1bit prefs 
 unwin.vidzb_tf_prefs=[];
+unwin.vidzb_tf_prefs['allowPlayerReload']=true;
+unwin.vidzb_tf_prefs['columnViewMode']=true;
 unwin.vidzb_tf_prefs['invertColorScheme']=false;
 unwin.vidzb_tf_prefs['invertPrefColorScheme']=false;
 unwin.vidzb_tf_prefs['autoScrollPastHeader']=true;
@@ -2268,80 +2270,85 @@ unwin.p_vidzbShowPrefs=function(){
 	}else{
 		if(unwin.vidzbigenabled && unwin.vidzbigSITEenabled){
 			prHTM+=unwin.p_beginPrefSectn('layout','Instant Layout');
-			
-			//unwin.myvideoalign="RIGHT";//"LEFT"CENTER"RIGHT";
-			VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_myvideoalign','change',vidzb_clickPrefSelect,true));
-			prHTM+=unwin.p_beginPrefItemRow()+'Video Layout <select id="vbg_prefInput_myvideoalign">';
-			if(unwin.myvideoalign=='RIGHT')checkd=' selected';
-				else checkd='';
-				prHTM+='<option value="RIGHT"'+checkd+'>Right &rarr;<br/>';
-				if(unwin.myvideoalign=='CENTER')checkd=' selected';
-				else checkd='';
-				prHTM+='<option value="CENTER"'+checkd+'>Middle<br/>';
-				if(unwin.myvideoalign=='LEFT')checkd=' selected';
-				else checkd='';
-				prHTM+='<option value="LEFT"'+checkd+'>Left &larr;<br/>';
-			prHTM+="</select>";
-			VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_mypreferednumcolumns','change',vidzb_clickPrefSelect,true));
-			prHTM+=' with <select id="vbg_prefInput_mypreferednumcolumns">';
-				if(unwin.mypreferednumcolumns==3)checkd=' selected';
-				else checkd='';
-				prHTM+='<option value="3"'+checkd+'>3<br/>';
-				if(unwin.mypreferednumcolumns==2)checkd=' selected';
-				else checkd='';
-				prHTM+='<option value="2"'+checkd+'>2<br/>';
-			prHTM+="</select>Columns "+unwin.p_getQuestionMarkImage('3 Columns requires ~1024 or greater window width.\\n\\nOtherwise it will default to 2 columns (Just scroll down to see the right column)\\n\\nI&rsquo;m not sure if anyone will use 2 column mode anyway,but if so perhaps you would like to see \\n  a) the option to position the comments below the info/video links or \\n  b) the option to have the setting middle-3 default to right-2 instead of left-2 when space runs out.  \\nLet me know which you like,if any or all.\\n\\nDefault Value: Middle,3 &rarr;uses up to 3 &rarr;If too thin for 3 &rarr;Left,2');
-			prHTM+=unwin.p_endPrefItemRow();
-			// end first row
-			//MinVW
-			VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_minimumVideoWidth','change',vidzb_clickPrefSelect,true));
-			prHTM+=unwin.p_beginPrefItemRow()+' Min Video Width <select id="vbg_prefInput_minimumVideoWidth">';
-				for(i in lOpMinVideoWidths){
-					if(unwin.minimumVideoWidth==lOpMinVideoWidths[i])checkd=' selected';
-					else checkd='';
-					prHTM+='<option value="'+lOpMinVideoWidths[i]+'"'+checkd+'>'+lOpMinVideoWidths[i]+'<br/>';
-				}
-			prHTM+="</select>px [2 vs 3 col threshold]"+unwin.p_getQuestionMarkImage('When the video width drops below this value,the third column will be dropped in favor of a 2 column layout. \\n\\nMakes sure your video is at least as big if not bigger than before.  This is for knowing when to drop 3 and go to 2 columns.  Does not go to 1 column at thsi time,so sizes smaller than 800x600 should choose 128.  This is only a horozontal maximum,and is not vertically enforced.\\n\\nDefault Value: 480');
-			prHTM+=unwin.p_endPrefItemRow();
-			//MaxVW
-			VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_maximumVideoWidth','change',vidzb_clickPrefSelect,true));
-			prHTM+=unwin.p_beginPrefItemRow()+' Max Video Width <select id="vbg_prefInput_maximumVideoWidth">';
-				for(i in lOpVideoWidths){
-					if(unwin.maximumVideoWidth==lOpVideoWidths[i])checkd=' selected';
-					else checkd='';
-					prHTM+='<option value="'+lOpVideoWidths[i]+'"'+checkd+'>'+lOpVideoWidths[i]+'<br/>';
-				}
-			prHTM+="</select>px [Saves CPU]"+unwin.p_getQuestionMarkImage('Flash (video) does not always do well at high resolutions,and though you might say &ldquo;but fullscreen works perfectly smooth&rdquo;you would be right,but thats because full screen mode uses your video card to scale up the flash,so its still really only rendering at ~480 pixels wide which is the defalt maximum video width for non-fullscreen mode.\\n\\nVidzBigger bypasses all of that,and changes the dimensions of the flash plugin on the screen,which means that when the video reaches ~1024 width [or &gt;],your CPU has to scale a frame of video and render each of those pixels of video to the screen for each frame [which is a lot of work,one second of 1024 video is typically at least 18,874,368 pixels,not that every last one gets update every time,or so you might hope].\\n\\nIf you notice your CPU is all full up,you might have too much stuff going,or you should use this option to enforce a maximum.  If you don&rsquo;t belive this option works see what happens to your CPU when you drop the video from 1024 [that is,if the video is acutally 1024 wide] to 320.\\n\\n  VidzBigger really only does stuff when you first load the page,scroll,or resize the window,so most of the time the only thing processing is flash. \\n\\nDefault Value: 1024');
-			prHTM+=unwin.p_endPrefItemRow();
-			
-			//VT and HZ black bars 
-			prHTM+=unwin.p_beginPrefItemRow()+'Prevent extra black bars '
-			if(unwin.preventVtBlackBars)checkd=' checked';
-			else checkd='';
-			prHTM+='<label><input type="Checkbox" onclick="if(this.checked){preventVtBlackBars=true}else{preventVtBlackBars=false};forcevidzb_apply_selected_fixes();" name="ap" '+checkd+'/>';
-			prHTM+=' Above&Below</label> ';
-			if(unwin.preventHzBlackBars)checkd=' checked';
-			else checkd='';
-			prHTM+='<label><input type="Checkbox" onclick="if(this.checked){preventHzBlackBars=true}else{preventHzBlackBars=false};forcevidzb_apply_selected_fixes();" name="ap" '+checkd+'/>';
-			prHTM+=' Left&Right</label>';
-			prHTM+=unwin.p_getQuestionMarkImage('This really only detects widescreen at this point for FMT22 movies since the ratio varied for some depending on the format, however this feature needs an update!  A new addtion will download an xml feed to detect widescreen videos automatically.  This feature DOES NOT work without access to UNSAFEWINDOW at this point, FireFox only feature, although detecting widescreen automatically now works in Chrome and Firefox.  If you uncheck both of these boxes,the video window will always fill to the maximum size,but the video itself remains the same dimensions,so you will have black bars.  It can be nice if you find that the video is changing size and frequently ends up under your m pointer preventings scroll whell control (flash plugin bug me that there is no parm to dissable flash scrolling...)\\n\\nDefault Value: ON & ON');
-			prHTM+=unwin.p_endPrefItemRow();
-		///THESE PREFS HAVE NO EFFECT IN CHROME AND DEPEND ON UNSAFE WINDOW TO FUNCTION!!!!		
-			//POSITION AUTOMATICALLY ect
-			prHTM+=unwin.p_createPrefCheckbox('defaultWideAspect','Use WideScreen Ratio First','The default 4:3 aspect ratio can be over-ridden with the widescreen ratio if you mostly watch WideScreen videos.  If you need to always have the correct aspect ratio verified and applied (on scroll) then you should enable the Lookup Correct Aspect Ratio feature.\\n\\nDefault Value: OFF');
-			prHTM+=unwin.p_createPrefCheckbox('chkAspectRatioXml','Lookup Correct Aspect Ratio (xml)','Defaults to 4:3 aspect ratio unless the Use WideScreen Ratio First feature is enabled.  For detecting widescreen correctly and automatically enable this feature to download XML which will verify the correct ratio is selected.\\n\\nDefault Value: ON');
 
-			//prHTM+=unwin.p_createPrefCheckbox('positionPersistently','Position Persistently','This setting forces an update each time the scroll event is fired, leading to more realistic display but also more updates fire which can contribute to scroll lag!\\n\\nDefault Value: OFF');
-			prHTM+=unwin.p_createPrefCheckbox('positionVideoAutomatically','Position & Scale video automatically [more jumpy]','Window 1024x768 or smaller should probably check this,1280x1024 should not.  For larger screen sizes consider your window aspect ratio-Widescreen generally performs better with this option ON.\\n\\nTrivia:  When this option is off,search box and window title remained in fixed position for ease of use specifically to make use of the extra space at 1280 or larger 4:3 (b0x) aspect.  This is the reason turning this option off performs so poorly at 800 and 1024,since the title takes up so much space (and the video really ought to be up-sized to fill the space as the user scrolls down and more space becomes available,which is precisely what this option does)!\\n\\nDefault Value: ON');
-			//prHTM+=unwin.p_createPrefCheckbox('centerVideoVertically','Center Video Vertically Automatically','Only valid if Position Automatically is ON.\\n\\nThis will attempt to center the video in vertical space.  DOES NOT apply when window scroll is near page TOP or BOTTOM,but when scrolling is centered.  Perhaps center vartically when scroll is centered would be more apt title.\\n\\nDoes not apply if the video is already being crushed vertically (ie: video must be at full width,with no black borders on left and right side).  If there is extra space below the video,the video will jump down to a centered position.  The idea behind this is that your mousewheel cannot scroll the window unless its over whitespace,so we distribute the whitespace around the video so that its easier to access for your scrolling pleasure.  Also you may notice this &ldquo;feature&rdquo;when Scale Video at Page Bottom is on.  Any feedback welcome.\\n\\nYou may also note,this option is rendered non-effective by unchecking Prevent Extra Black Bars Above/Below.\\n\\nDefault Value: ON',1);
-			prHTM+=unwin.p_createPrefCheckbox('scaleVideoAtPageBottom','Allow Position & Scale at page Footer','When you get to the bottom of the page,there is this pesky thing that happens where the video covers up the search box and whatever other legal nonsense and potentially useful links exist at the bottom of the page!  I don&rsquo;t necessarly endorce ignoring legal stuff so by default the video will shrink so you can see all that.\\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('columnPriorityComments','Comment column First (toggle column order)','In 2 column mode this setting determines if the comment column will be added first or second\\n\\nIn 3 column mode this determines if the comments are on the left or the right.\\n\\nDefault Value: OFF');
-			prHTM+=unwin.p_createPrefCheckbox('columnScrollIndependent','Scroll columns independent of page (experimental)','Also hides the footer \\n\\nBe aware that checking Auto Scroll Past Header causes the page to get tripple scroll bars but larger video and column size in 2 col mode. \\n\\nDefault Value: OFF');
-			prHTM+=unwin.p_createPrefCheckbox('autoScrollPastHeader','Auto Scroll Past Header (bigger video on load)','Jumps the page down past the header on page load which makes the video area as large as possible.\\n\\nThis is a nice option for 2 column mode. \\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
-			if(unwin.snapfullscreenmode){
-				prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at past header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',2);
-				//prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  It will probably stop working soon.';
+			prHTM+=unwin.p_createPrefCheckbox('columnViewMode','Enable Column Mode (on reload)','This enables the primary feature of VidzBigger, keeping the video on the screen at all times (and possibly filling the entire window).  This will almost always cause the player to be reloaded once until document-start is completed.\\n\\nDefault Value: ON');
+			prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
+			
+			if(unwin.columnViewMode){
+				//unwin.myvideoalign="RIGHT";//"LEFT"CENTER"RIGHT";
+				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_myvideoalign','change',vidzb_clickPrefSelect,true));
+				prHTM+=unwin.p_beginPrefItemRow()+'Video Layout <select id="vbg_prefInput_myvideoalign">';
+				if(unwin.myvideoalign=='RIGHT')checkd=' selected';
+					else checkd='';
+					prHTM+='<option value="RIGHT"'+checkd+'>Right &rarr;<br/>';
+					if(unwin.myvideoalign=='CENTER')checkd=' selected';
+					else checkd='';
+					prHTM+='<option value="CENTER"'+checkd+'>Middle<br/>';
+					if(unwin.myvideoalign=='LEFT')checkd=' selected';
+					else checkd='';
+					prHTM+='<option value="LEFT"'+checkd+'>Left &larr;<br/>';
+				prHTM+="</select>";
+				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_mypreferednumcolumns','change',vidzb_clickPrefSelect,true));
+				prHTM+=' with <select id="vbg_prefInput_mypreferednumcolumns">';
+					if(unwin.mypreferednumcolumns==3)checkd=' selected';
+					else checkd='';
+					prHTM+='<option value="3"'+checkd+'>3<br/>';
+					if(unwin.mypreferednumcolumns==2)checkd=' selected';
+					else checkd='';
+					prHTM+='<option value="2"'+checkd+'>2<br/>';
+				prHTM+="</select>Columns "+unwin.p_getQuestionMarkImage('3 Columns requires ~1024 or greater window width.\\n\\nOtherwise it will default to 2 columns (Just scroll down to see the right column)\\n\\nI&rsquo;m not sure if anyone will use 2 column mode anyway,but if so perhaps you would like to see \\n  a) the option to position the comments below the info/video links or \\n  b) the option to have the setting middle-3 default to right-2 instead of left-2 when space runs out.  \\nLet me know which you like,if any or all.\\n\\nDefault Value: Middle,3 &rarr;uses up to 3 &rarr;If too thin for 3 &rarr;Left,2');
+				prHTM+=unwin.p_endPrefItemRow();
+				// end first row
+				//MinVW
+				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_minimumVideoWidth','change',vidzb_clickPrefSelect,true));
+				prHTM+=unwin.p_beginPrefItemRow()+' Min Video Width <select id="vbg_prefInput_minimumVideoWidth">';
+					for(i in lOpMinVideoWidths){
+						if(unwin.minimumVideoWidth==lOpMinVideoWidths[i])checkd=' selected';
+						else checkd='';
+						prHTM+='<option value="'+lOpMinVideoWidths[i]+'"'+checkd+'>'+lOpMinVideoWidths[i]+'<br/>';
+					}
+				prHTM+="</select>px [2 vs 3 col threshold]"+unwin.p_getQuestionMarkImage('When the video width drops below this value,the third column will be dropped in favor of a 2 column layout. \\n\\nMakes sure your video is at least as big if not bigger than before.  This is for knowing when to drop 3 and go to 2 columns.  Does not go to 1 column at thsi time,so sizes smaller than 800x600 should choose 128.  This is only a horozontal maximum,and is not vertically enforced.\\n\\nDefault Value: 480');
+				prHTM+=unwin.p_endPrefItemRow();
+				//MaxVW
+				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_maximumVideoWidth','change',vidzb_clickPrefSelect,true));
+				prHTM+=unwin.p_beginPrefItemRow()+' Max Video Width <select id="vbg_prefInput_maximumVideoWidth">';
+					for(i in lOpVideoWidths){
+						if(unwin.maximumVideoWidth==lOpVideoWidths[i])checkd=' selected';
+						else checkd='';
+						prHTM+='<option value="'+lOpVideoWidths[i]+'"'+checkd+'>'+lOpVideoWidths[i]+'<br/>';
+					}
+				prHTM+="</select>px [Saves CPU]"+unwin.p_getQuestionMarkImage('Flash (video) does not always do well at high resolutions,and though you might say &ldquo;but fullscreen works perfectly smooth&rdquo;you would be right,but thats because full screen mode uses your video card to scale up the flash,so its still really only rendering at ~480 pixels wide which is the defalt maximum video width for non-fullscreen mode.\\n\\nVidzBigger bypasses all of that,and changes the dimensions of the flash plugin on the screen,which means that when the video reaches ~1024 width [or &gt;],your CPU has to scale a frame of video and render each of those pixels of video to the screen for each frame [which is a lot of work,one second of 1024 video is typically at least 18,874,368 pixels,not that every last one gets update every time,or so you might hope].\\n\\nIf you notice your CPU is all full up,you might have too much stuff going,or you should use this option to enforce a maximum.  If you don&rsquo;t belive this option works see what happens to your CPU when you drop the video from 1024 [that is,if the video is acutally 1024 wide] to 320.\\n\\n  VidzBigger really only does stuff when you first load the page,scroll,or resize the window,so most of the time the only thing processing is flash. \\n\\nDefault Value: 1024');
+				prHTM+=unwin.p_endPrefItemRow();
+				
+				//VT and HZ black bars 
+				prHTM+=unwin.p_beginPrefItemRow()+'Prevent extra black bars '
+				if(unwin.preventVtBlackBars)checkd=' checked';
+				else checkd='';
+				prHTM+='<label><input type="Checkbox" onclick="if(this.checked){preventVtBlackBars=true}else{preventVtBlackBars=false};forcevidzb_apply_selected_fixes();" name="ap" '+checkd+'/>';
+				prHTM+=' Above&Below</label> ';
+				if(unwin.preventHzBlackBars)checkd=' checked';
+				else checkd='';
+				prHTM+='<label><input type="Checkbox" onclick="if(this.checked){preventHzBlackBars=true}else{preventHzBlackBars=false};forcevidzb_apply_selected_fixes();" name="ap" '+checkd+'/>';
+				prHTM+=' Left&Right</label>';
+				prHTM+=unwin.p_getQuestionMarkImage('This really only detects widescreen at this point for FMT22 movies since the ratio varied for some depending on the format, however this feature needs an update!  A new addtion will download an xml feed to detect widescreen videos automatically.  This feature DOES NOT work without access to UNSAFEWINDOW at this point, FireFox only feature, although detecting widescreen automatically now works in Chrome and Firefox.  If you uncheck both of these boxes,the video window will always fill to the maximum size,but the video itself remains the same dimensions,so you will have black bars.  It can be nice if you find that the video is changing size and frequently ends up under your m pointer preventings scroll whell control (flash plugin bug me that there is no parm to dissable flash scrolling...)\\n\\nDefault Value: ON & ON');
+				prHTM+=unwin.p_endPrefItemRow();
+			///THESE PREFS HAVE NO EFFECT IN CHROME AND DEPEND ON UNSAFE WINDOW TO FUNCTION!!!!		
+				//POSITION AUTOMATICALLY ect
+				prHTM+=unwin.p_createPrefCheckbox('defaultWideAspect','Use WideScreen Ratio First','The default 4:3 aspect ratio can be over-ridden with the widescreen ratio if you mostly watch WideScreen videos.  If you need to always have the correct aspect ratio verified and applied (on scroll) then you should enable the Lookup Correct Aspect Ratio feature.\\n\\nDefault Value: OFF');
+				prHTM+=unwin.p_createPrefCheckbox('chkAspectRatioXml','Lookup Correct Aspect Ratio (xml)','Defaults to 4:3 aspect ratio unless the Use WideScreen Ratio First feature is enabled.  For detecting widescreen correctly and automatically enable this feature to download XML which will verify the correct ratio is selected.\\n\\nDefault Value: ON');
+	
+				//prHTM+=unwin.p_createPrefCheckbox('positionPersistently','Position Persistently','This setting forces an update each time the scroll event is fired, leading to more realistic display but also more updates fire which can contribute to scroll lag!\\n\\nDefault Value: OFF');
+				prHTM+=unwin.p_createPrefCheckbox('positionVideoAutomatically','Position & Scale video automatically [more jumpy]','Window 1024x768 or smaller should probably check this,1280x1024 should not.  For larger screen sizes consider your window aspect ratio-Widescreen generally performs better with this option ON.\\n\\nTrivia:  When this option is off,search box and window title remained in fixed position for ease of use specifically to make use of the extra space at 1280 or larger 4:3 (b0x) aspect.  This is the reason turning this option off performs so poorly at 800 and 1024,since the title takes up so much space (and the video really ought to be up-sized to fill the space as the user scrolls down and more space becomes available,which is precisely what this option does)!\\n\\nDefault Value: ON');
+				//prHTM+=unwin.p_createPrefCheckbox('centerVideoVertically','Center Video Vertically Automatically','Only valid if Position Automatically is ON.\\n\\nThis will attempt to center the video in vertical space.  DOES NOT apply when window scroll is near page TOP or BOTTOM,but when scrolling is centered.  Perhaps center vartically when scroll is centered would be more apt title.\\n\\nDoes not apply if the video is already being crushed vertically (ie: video must be at full width,with no black borders on left and right side).  If there is extra space below the video,the video will jump down to a centered position.  The idea behind this is that your mousewheel cannot scroll the window unless its over whitespace,so we distribute the whitespace around the video so that its easier to access for your scrolling pleasure.  Also you may notice this &ldquo;feature&rdquo;when Scale Video at Page Bottom is on.  Any feedback welcome.\\n\\nYou may also note,this option is rendered non-effective by unchecking Prevent Extra Black Bars Above/Below.\\n\\nDefault Value: ON',1);
+				prHTM+=unwin.p_createPrefCheckbox('scaleVideoAtPageBottom','Allow Position & Scale at page Footer','When you get to the bottom of the page,there is this pesky thing that happens where the video covers up the search box and whatever other legal nonsense and potentially useful links exist at the bottom of the page!  I don&rsquo;t necessarly endorce ignoring legal stuff so by default the video will shrink so you can see all that.\\n\\nDefault Value: ON');
+				prHTM+=unwin.p_createPrefCheckbox('columnPriorityComments','Comment column First (toggle column order)','In 2 column mode this setting determines if the comment column will be added first or second\\n\\nIn 3 column mode this determines if the comments are on the left or the right.\\n\\nDefault Value: OFF');
+				prHTM+=unwin.p_createPrefCheckbox('columnScrollIndependent','Scroll columns independent of page (experimental)','Also hides the footer \\n\\nBe aware that checking Auto Scroll Past Header causes the page to get tripple scroll bars but larger video and column size in 2 col mode. \\n\\nDefault Value: OFF');
+				prHTM+=unwin.p_createPrefCheckbox('autoScrollPastHeader','Auto Scroll Past Header (bigger video on load)','Jumps the page down past the header on page load which makes the video area as large as possible.\\n\\nThis is a nice option for 2 column mode. \\n\\nDefault Value: ON');
+				prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
+				if(unwin.snapfullscreenmode){
+					prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at past header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',2);
+					//prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  It will probably stop working soon.';
+				}
 			}
 			prHTM+='</div>';//end layout hider div
 			
@@ -2462,6 +2469,7 @@ unwin.p_vidzbShowPrefs=function(){
 						if( unwin.enable_jsapi )jsamsg='<span style="color:orange;">status unknown...</span>';
 						else jsamsg='off';
 					}
+					prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
 					prHTM+=unwin.p_beginPrefSectn('JSAPI','YouTube JSAPI <span id="jsapimsg" style="font-size:12px;position;relative;top:-2px;">('+jsamsg+')</span>');
 					var selHTM=''
 					if(unwin.enable_jsapi){
@@ -2993,6 +3001,7 @@ var gsPlayerReady=function(playerId){document.getElementById("movie_player").add
 GM_addScript('var gsPlayerChangeReady='+gsPlayerChangeReady.toString()+';var gsPlayerReady='+gsPlayerReady.toString());
 }// Reloads the player by removing it from the DOM tree and inserting it again in the same position// If the video is substituted by an icon,it won't do anything (a reload isn't necessary)
 function reloadPlayer(){
+	if(!unwin.allowPlayerReload)return;
 	if(_vt("movie_player")){
 		var player=$g("movie_player");
 		var playerParent=player.parentNode;
@@ -3959,171 +3968,174 @@ function readyToVidsBig(){
 			//	alert('ok'+chref.indexOf(unwin.watchStrings)+_vt(unwin.ids_video_holder));
 			//alert(unwin.watchStrings + chref.indexOf(unwin.watchStrings));
 		if(chref.indexOf('contact.php')<=0 && ((chref.indexOf(unwin.watchStrings)>7) &&  _vt(unwin.ids_video_holder))){
-			//ARE WE ON A VIDEO PAGE???
-		  unwin.isInWatchMode=true;
-		  vidzbiggerCheckVersion();
-		  unwin.vidzb_oneTimeSetupAndResize();
-		  GM_addStyle("embed{display:block}");
-			//unwin.vidzb_initialSetupAndResize();
-			unwin.forcevidzb_apply_selected_fixes();//unnecessary redundency but looks  cleaner... something
-	
-			//if(unwin.isInWatchMode){//always in watch mode here.. should it be?
-			
-				//unwin.headerHeight=unwin.getElementHeight($g(unwin.ids_vb_head))+unwin.getElementHeight($g(unwin.ids_vb_titl));
-				unwin.headerHeight=unwin.getElementYpos($g(unwin.ids_vb_cont));//unwin.getElementHeight($g(unwin.ids_vb_head))+unwin.getElementHeight($g(unwin.ids_vb_titl))+10;
-
-				if(unwin.autoScrollPastHeader){
-					if(unwin.getScroll()==0)window.scroll(0,unwin.headerHeight-10);
-					unwin.fssnapHeight=unwin.headerHeight-10;
-				}else{
-					unwin.fssnapHeight=unwin.headerHeight-10;//serves as a ready point ..???
-				}
-				GM_addScript('yt.www.watch.player.enableWideScreen=function(a,b){if(window.pageYOffset!='+unwin.fssnapHeight+'){window.scroll(0,'+unwin.fssnapHeight+')}else{window.scroll(0,0)}};yt.www.watch.player.onPlayerSizeClicked=yt.www.watch.player.enableWideScreen;void(0)');
-				//apply watch mode CSS
-				var scriptStyles=[];
-			
-				performFunkyChecks();
-			
-				scriptStyles.push(".video-bar-item{width:70px;}");
-				scriptStyles.push(".v90WideEntry{padding-left:0px;;}");
+			if(!unwin.columnViewMode)initialYousableSetup();
+			else{
+				//ARE WE ON A VIDEO PAGE???
+			  unwin.isInWatchMode=true;
+			  vidzbiggerCheckVersion();
+			  unwin.vidzb_oneTimeSetupAndResize();
+			  GM_addStyle("embed{display:block}");
+				//unwin.vidzb_initialSetupAndResize();
+				unwin.forcevidzb_apply_selected_fixes();//unnecessary redundency but looks  cleaner... something
+		
+				//if(unwin.isInWatchMode){//always in watch mode here.. should it be?
 				
-				// Adds the styles from the script to the page,making them important
-				scriptStyles.forEach(function(s){GM_addStyle(s.makeImportant());});
-			//}
+					//unwin.headerHeight=unwin.getElementHeight($g(unwin.ids_vb_head))+unwin.getElementHeight($g(unwin.ids_vb_titl));
+					unwin.headerHeight=unwin.getElementYpos($g(unwin.ids_vb_cont));//unwin.getElementHeight($g(unwin.ids_vb_head))+unwin.getElementHeight($g(unwin.ids_vb_titl))+10;
 	
-			if(chref.indexOf('youtube.')>0 && _vt('movie_player') ){
-				
-				if (unwin.dissableAnnotations){
-					setFlashVar("iv_module","",false);
-					setFlashVar("iv_storage_server","",false);
-				}
-				if( unwin.vidzb_blockPlayerAds ){
-					setFlashVar("ad_host","",false);
-					setFlashVar("ad_module","",false);
-					setFlashVar("ad_eurl","",false);
-					setFlashVar("ad_module","",false);
-					//setFlashVar("ctb_xml","",false);
-				}
-				if(unwin.enable_jsapi ){
-					
-					if(unwin.allowPlayerClk){
-						$g('movie_player').setAttribute('wmode','transparent');
+					if(unwin.autoScrollPastHeader){
+						if(unwin.getScroll()==0)window.scroll(0,unwin.headerHeight-10);
+						unwin.fssnapHeight=unwin.headerHeight-10;
+					}else{
+						unwin.fssnapHeight=unwin.headerHeight-10;//serves as a ready point ..???
 					}
-					if(unwin.donotautoplayVideos&&unwin.donotautobuffer)setFlashVar("autoplay","0",false);
-					//if(unwin.donotautoplayVideos){
-					setFlashVar("jsapicallback","gsPlayerReady"+unwin.extraflashvars,false,true);// Depends on the Main Reload
-					//setFlashVar("color1","0",false);//0x
-					//setFlashVar("color2","0",false);
-					//setFlashVar("wheelScrollEnabled","0");
-					reloadPlayer();//now or later......
-				}else{
-					//no JSAPI
+					GM_addScript('yt.www.watch.player.enableWideScreen=function(a,b){if(window.pageYOffset!='+unwin.fssnapHeight+'){window.scroll(0,'+unwin.fssnapHeight+')}else{window.scroll(0,0)}};yt.www.watch.player.onPlayerSizeClicked=yt.www.watch.player.enableWideScreen;void(0)');
+					//apply watch mode CSS
+					var scriptStyles=[];
+				
+					performFunkyChecks();
+				
+					scriptStyles.push(".video-bar-item{width:70px;}");
+					scriptStyles.push(".v90WideEntry{padding-left:0px;;}");
 					
+					// Adds the styles from the script to the page,making them important
+					scriptStyles.forEach(function(s){GM_addStyle(s.makeImportant());});
+				//}
+		
+				if(chref.indexOf('youtube.')>0 && _vt('movie_player') ){
 					
-					//if(unwin.useNonFlashPlayer){
-					//	var video_id=location.search.replace(/.*v=/,'').replace(/&.*/,'');
-					//  var video_t=$g('movie_player').getAttribute('flashvars').replace(/.*&t=/,'').replace(/&.*/,'');
-					//  var video_src=location.protocol + '//' + location.host + '/get_video?video_id=' + video_id + '&t=' + video_t + '&fmt=18';
-					//	var new_player='<embed id="mp4-player" type="video/mp4" src="'+video_src.replace(/&/g, "&amp;") + '" '+'height="385" width="640" scale="aspect"></embed>';
-					//	$g(unwin.ids_video_holder).innerHTML=new_player;
-					//}
-					
+					if (unwin.dissableAnnotations){
+						setFlashVar("iv_module","",false);
+						setFlashVar("iv_storage_server","",false);
+					}
+					if( unwin.vidzb_blockPlayerAds ){
+						setFlashVar("ad_host","",false);
+						setFlashVar("ad_module","",false);
+						setFlashVar("ad_eurl","",false);
+						setFlashVar("ad_module","",false);
+						//setFlashVar("ctb_xml","",false);
+					}
+					if(unwin.enable_jsapi ){
+						
+						if(unwin.allowPlayerClk){
+							$g('movie_player').setAttribute('wmode','transparent');
+						}
+						if(unwin.donotautoplayVideos&&unwin.donotautobuffer)setFlashVar("autoplay","0",false);
+						//if(unwin.donotautoplayVideos){
+						setFlashVar("jsapicallback","gsPlayerReady"+unwin.extraflashvars,false,true);// Depends on the Main Reload
+						//setFlashVar("color1","0",false);//0x
+						//setFlashVar("color2","0",false);
+						//setFlashVar("wheelScrollEnabled","0");
+						reloadPlayer();//now or later......
+					}else{
+						//no JSAPI
+						
+						
+						//if(unwin.useNonFlashPlayer){
+						//	var video_id=location.search.replace(/.*v=/,'').replace(/&.*/,'');
+						//  var video_t=$g('movie_player').getAttribute('flashvars').replace(/.*&t=/,'').replace(/&.*/,'');
+						//  var video_src=location.protocol + '//' + location.host + '/get_video?video_id=' + video_id + '&t=' + video_t + '&fmt=18';
+						//	var new_player='<embed id="mp4-player" type="video/mp4" src="'+video_src.replace(/&/g, "&amp;") + '" '+'height="385" width="640" scale="aspect"></embed>';
+						//	$g(unwin.ids_video_holder).innerHTML=new_player;
+						//}
+						
+					}
+				}else if(_vt('fpObj')){//metacafe performs better this way?
+					 $g('fpObj').setAttribute('wmode','opaque');
+					 reloadPlayer();
 				}
-			}else if(_vt('fpObj')){//metacafe performs better this way?
-				 $g('fpObj').setAttribute('wmode','opaque');
-				 reloadPlayer();
+				unwin.needsFurtherUpdate=true;//force update
+				unwin.isLoadedOnce=true;
+				//unwin.onload=function(){	
+				//	window.setInterval(function(){unwin.vidzb_apply_selected_fixes()},10);
+				//}	
+				//ADD EVENT LISTENERS
+				unwin.disableFixes=false
+				//unwin.onload=function(){
+				
+				window.addEventListener('scroll',function(){
+						unwin.vidzb_apply_selected_fixes();
+					},ucap)
+				//					if(unwin.positionPersistently||!unwin.disableFixes){window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},10);//doing these on load or else you catch the scroll event we do
+				//						unwin.disableFixes=true;	
+				//						window.setTimeout(function(){unwin.disableFixes=false;if(unwin.positionVideoAutomatically)unwin.vidzb_apply_selected_fixes();},550);
+				//					}
+					window.addEventListener('resize',function(){
+						unwin.needsFurtherUpdate=true;//force update
+						unwin.hasBeenAwayFromPageTopBtm=false;
+						unwin.vidzbPrefsDoNotFitUntilResize=false;
+						unwin.vidzb_apply_selected_fixes();
+					},ucap)//unwin.forcevidzb_apply_selected_fixes();
+	//					if(unwin.positionPersistently||!unwin.disableFixes){window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},10);//doing these on load or else you catch the scroll event we do
+	//						unwin.disableFixes=true;	
+	//						window.setTimeout(function(){unwin.disableFixes=false;unwin.vidzb_apply_selected_fixes();},550);
+	//					}
+				//}
+				cevents.register(document.body,'mouseup',vidzb_checkForNewLinks);
+				//document.addEventListener("DOMNodeInserted", function(){unwin.vidzb_apply_selected_fixes();},false); prefs kill this??
+			
+			if( unwin.html5autoscrolcredits ){
+					/** This is high-level function.
+					 * It must react to delta being more/less than zero.
+					 */
+					function handle(delta) {
+						var player=unwin.searchVideoPlayer($g(unwin.ids_video_holder)).firstChild;
+								
+					    if (delta < 0)
+								player.currentTime=player.currentTime+0.25;
+					    else{
+								player.currentTime=player.currentTime-1;
+						}
+					}
+					
+					/** Event handler for mouse wheel event.
+					 */
+					function wheel(event){
+					        var delta=0;
+					        if (!event) /* For IE. */
+					                event=window.event;
+					        if (event.wheelDelta) { /* IE/Opera. */
+					                delta=event.wheelDelta/120;
+					                /** In Opera 9, delta differs in sign as compared to IE.
+					                 */
+					                if (window.opera)
+					                        delta=-delta;
+					        } else if (event.detail) { /** Mozilla case. */
+					                /** In Mozilla, sign of delta is different than in IE.
+					                 * Also, delta is multiple of 3.
+					                 */
+					                delta=-event.detail/3;
+					        }
+					        /** If delta is nonzero, handle it.
+					         * Basically, delta is now positive if wheel was scrolled up,
+					         * and negative, if wheel was scrolled down.
+					         */
+					        if (delta)
+					                handle(delta);
+					        /** Prevent default actions caused by mouse wheel.
+					         * That might be ugly, but we handle scrolls somehow
+					         * anyway, so don't bother here..
+					         */
+					        //if (event.preventDefault)
+					       //         event.preventDefault();
+					//	event.returnValue=false;
+					}
+					
+					/** Initialization code. 
+					 * If you use your own event management code, change it as required.
+					 */
+					if (window.addEventListener)
+					        /** DOMMouseScroll is for mozilla. */
+					        window.addEventListener('DOMMouseScroll', wheel, false);
+					/** IE/Opera. */
+					window.onmousewheel=document.onmousewheel=wheel;
 			}
-			unwin.needsFurtherUpdate=true;//force update
-			unwin.isLoadedOnce=true;
-			//unwin.onload=function(){	
-			//	window.setInterval(function(){unwin.vidzb_apply_selected_fixes()},10);
-			//}	
-			//ADD EVENT LISTENERS
-			unwin.disableFixes=false
-			//unwin.onload=function(){
 			
-			window.addEventListener('scroll',function(){
-					unwin.vidzb_apply_selected_fixes();
-				},ucap)
-			//					if(unwin.positionPersistently||!unwin.disableFixes){window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},10);//doing these on load or else you catch the scroll event we do
-			//						unwin.disableFixes=true;	
-			//						window.setTimeout(function(){unwin.disableFixes=false;if(unwin.positionVideoAutomatically)unwin.vidzb_apply_selected_fixes();},550);
-			//					}
-				window.addEventListener('resize',function(){
-					unwin.needsFurtherUpdate=true;//force update
-					unwin.hasBeenAwayFromPageTopBtm=false;
-					unwin.vidzbPrefsDoNotFitUntilResize=false;
-					unwin.vidzb_apply_selected_fixes();
-				},ucap)//unwin.forcevidzb_apply_selected_fixes();
-//					if(unwin.positionPersistently||!unwin.disableFixes){window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},10);//doing these on load or else you catch the scroll event we do
-//						unwin.disableFixes=true;	
-//						window.setTimeout(function(){unwin.disableFixes=false;unwin.vidzb_apply_selected_fixes();},550);
-//					}
-			//}
-			cevents.register(document.body,'mouseup',vidzb_checkForNewLinks);
-			//document.addEventListener("DOMNodeInserted", function(){unwin.vidzb_apply_selected_fixes();},false); prefs kill this??
-		
-		if( unwin.html5autoscrolcredits ){
-				/** This is high-level function.
-				 * It must react to delta being more/less than zero.
-				 */
-				function handle(delta) {
-					var player=unwin.searchVideoPlayer($g(unwin.ids_video_holder)).firstChild;
-							
-				    if (delta < 0)
-							player.currentTime=player.currentTime+0.25;
-				    else{
-							player.currentTime=player.currentTime-1;
-					}
-				}
-				
-				/** Event handler for mouse wheel event.
-				 */
-				function wheel(event){
-				        var delta=0;
-				        if (!event) /* For IE. */
-				                event=window.event;
-				        if (event.wheelDelta) { /* IE/Opera. */
-				                delta=event.wheelDelta/120;
-				                /** In Opera 9, delta differs in sign as compared to IE.
-				                 */
-				                if (window.opera)
-				                        delta=-delta;
-				        } else if (event.detail) { /** Mozilla case. */
-				                /** In Mozilla, sign of delta is different than in IE.
-				                 * Also, delta is multiple of 3.
-				                 */
-				                delta=-event.detail/3;
-				        }
-				        /** If delta is nonzero, handle it.
-				         * Basically, delta is now positive if wheel was scrolled up,
-				         * and negative, if wheel was scrolled down.
-				         */
-				        if (delta)
-				                handle(delta);
-				        /** Prevent default actions caused by mouse wheel.
-				         * That might be ugly, but we handle scrolls somehow
-				         * anyway, so don't bother here..
-				         */
-				        //if (event.preventDefault)
-				       //         event.preventDefault();
-				//	event.returnValue=false;
-				}
-				
-				/** Initialization code. 
-				 * If you use your own event management code, change it as required.
-				 */
-				if (window.addEventListener)
-				        /** DOMMouseScroll is for mozilla. */
-				        window.addEventListener('DOMMouseScroll', wheel, false);
-				/** IE/Opera. */
-				window.onmousewheel=document.onmousewheel=wheel;
-		}
-		
-			//CALL THINGS AT LEAST ONCE (ON DOCUMENT READY<WHICH IS WHEN THE USERSCRIPT STARTS)
-			//unwin.vidzb_apply_selected_fixes(); //(AH HA!)
-			//unwin.forcevidzb_apply_selected_fixes();
-			bigifyComments();
+				//CALL THINGS AT LEAST ONCE (ON DOCUMENT READY<WHICH IS WHEN THE USERSCRIPT STARTS)
+				//unwin.vidzb_apply_selected_fixes(); //(AH HA!)
+				//unwin.forcevidzb_apply_selected_fixes();
+				bigifyComments();
+			}
 		}else{
 			if(chref.indexOf('vidzbigger.com')<=0){
 				unwin.vidzb_initialSkinSetup();
