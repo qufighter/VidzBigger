@@ -2469,7 +2469,6 @@ unwin.p_vidzbShowPrefs=function(){
 						if( unwin.enable_jsapi )jsamsg='<span style="color:orange;">status unknown...</span>';
 						else jsamsg='off';
 					}
-					prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
 					prHTM+=unwin.p_beginPrefSectn('JSAPI','YouTube JSAPI <span id="jsapimsg" style="font-size:12px;position;relative;top:-2px;">('+jsamsg+')</span>');
 					var selHTM=''
 					if(unwin.enable_jsapi){
@@ -2482,6 +2481,7 @@ unwin.p_vidzbShowPrefs=function(){
 						}
 						selHTM+="</select> retry";
 					}
+					prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
 					prHTM+=unwin.p_createPrefCheckbox('enable_jsapi','Enable Youtube JSAPI (on load)</label>'+selHTM,'The JSAPI is required for certain YouTube features such as Toggling the Annotations Editor to work properly,so this is enabled by default.  Also possible to access VidzLoops features when this is enabled.');
 					if(unwin.enable_jsapi){
 						//autoplay
