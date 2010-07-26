@@ -3001,7 +3001,10 @@ var gsPlayerReady=function(playerId){document.getElementById("movie_player").add
 GM_addScript('var gsPlayerChangeReady='+gsPlayerChangeReady.toString()+';var gsPlayerReady='+gsPlayerReady.toString());
 }// Reloads the player by removing it from the DOM tree and inserting it again in the same position// If the video is substituted by an icon,it won't do anything (a reload isn't necessary)
 function reloadPlayer(){
-	if(!unwin.allowPlayerReload)return;
+	if(!unwin.allowPlayerReload){
+		console.log("Allow Player Reload must be enabled for this feature");
+		return;
+	}
 	if(_vt("movie_player")){
 		var player=$g("movie_player");
 		var playerParent=player.parentNode;
@@ -3046,33 +3049,33 @@ function deleteFlashVar(varName,doReloadPlayer){
 }
 // Returns an object with the details of the passed video format (or null is the format is unknown)
 function getVideoFormatDetails(vFormat){//awesome
-	var sFmt,sVq,sMIME,iQI;// iQI is a internal "quality index" used to order the video formats according to its expected quality (higher is better)
+	var sFmt,sVq,sMIME,iQI,jq;// iQI is a internal "quality index" used to order the video formats according to its expected quality (higher is better)
 	var unknownFormat=false;
 	switch(vFormat-0){//22/1280x720/9/0/115,35/854x480/9/0/115,34/640x360/9/0/115,5/320x240/7/0/0
 		case 0:// FLV Low Quality format
-			sVq="1";sFmt="";sMIME="video/x-flv";iQI=1;break;
+			sVq="1";sFmt="";sMIME="video/x-flv";iQI=1;jq="small";break;
 		case 5:// FLV Mid Quality format
-			sVq="2";sFmt="5/320x240/7/0/0";sMIME="video/x-flv";iQI=2;break;
+			sVq="2";sFmt="5/320x240/7/0/0";sMIME="video/x-flv";iQI=2;jq="small";break;
 		case 6:// FLV High Quality format
-			sVq="2";sFmt="6/320x240/7/0/0";sMIME="video/x-flv";iQI=3;break;
+			sVq="2";sFmt="6/320x240/7/0/0";sMIME="video/x-flv";iQI=3;jq="small";break;
 		case 13:// 3GP LOW Quality format
-			sVq="2";sFmt="13/720000/7/0/0";sMIME="video/3gpp";iQI=3;break;
+			sVq="2";sFmt="13/720000/7/0/0";sMIME="video/3gpp";iQI=3;jq="small";break;
 		case 17:// 3GP High Quality format
-			sVq="2";sFmt="17/720000/7/0/0";sMIME="video/3gpp";iQI=3;break;
+			sVq="2";sFmt="17/720000/7/0/0";sMIME="video/3gpp";iQI=3;jq="small";break;
 		case 18:// MPEG-4 H.264 format
-			sVq="2";sFmt="18/640x360/9/0/115";sMIME="video/mp4";iQI=5;break;
+			sVq="2";sFmt="18/640x360/9/0/115";sMIME="video/mp4";iQI=5;jq="medium";break;
 		case 22:// MPEG-4 H.264 HQ format
-			sVq="2";sFmt="22/1280x720/9/0/115";sMIME="video/mp4";iQI=7;break;
+			sVq="2";sFmt="22/1280x720/9/0/115";sMIME="video/mp4";iQI=7;jq="large";break;
 		case 34:
-			sVq="2";sFmt="34/640x360/9/0/115";sMIME="video/mp4";iQI=4;break;
+			sVq="2";sFmt="34/640x360/9/0/115";sMIME="video/mp4";iQI=4;jq="medium";break;
 		case 35:
-			sVq="2";sFmt="35/854x480/9/0/115";sMIME="video/mp4";iQI=6;break;
+			sVq="2";sFmt="35/854x480/9/0/115";sMIME="video/mp4";iQI=6;jq="medium";break;
 		case 37:
-			sVq="2";sFmt="37/1920x1080/9/0/115";sMIME="video/mp4";iQI=8;break;
+			sVq="2";sFmt="37/1920x1080/9/0/115";sMIME="video/mp4";iQI=8;jq="hd720";break;
 		default:// Unknown format
 			unknownFormat=true;break;
 	}
-	return (unknownFormat) ? null :{vq: sVq,fmt_map: sFmt,MIMEString: sMIME,iQI: iQI};
+	return (unknownFormat) ? null :{vq: sVq,fmt_map: sFmt,MIMEString: sMIME,iQI: iQI,jsq:jq};
 }
 // Creates a new node with the given attributes and properties (be careful with XPCNativeWrapper limitations)
 function createNode(type,attributes,props){
@@ -3343,12 +3346,19 @@ function selChangeVideoFormat(evt){
 	}else{
 		var videoFormatDetails=getVideoFormatDetails(selNewValue);
 		if (videoFormatDetails !==null){
-			//var player=_vt("movie_player");var uwPlayer=getJSobj(player);
-			setFlashVar("vq",videoFormatDetails.vq,false);
-			//setFlashVar("start",Math.floor(uwPlayer.getCurrentTime()),false);
-			//console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
-			setFlashVar("fmt_map",videoFormatDetails.fmt_map+(videoFormatDetails.fmt_map?','+ovformat:''),true);
-			//console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
+			
+			//if new style player
+			var player=_vt("movie_player");var uwPlayer=getJSobj(player);
+			if(typeof(uwPlayer.setPlaybackQuality)=='function'){
+				console.log('setting:'+videoFormatDetails.jsq+'=');
+				uwPlayer.setPlaybackQuality(videoFormatDetails.jsq);
+			}else{
+				setFlashVar("vq",videoFormatDetails.vq,false);
+				//setFlashVar("start",Math.floor(uwPlayer.getCurrentTime()),false);
+				//console.log(videoFormatDetails.fmt_map + ' '+videoFormatDetails.vq);
+				setFlashVar("fmt_map",videoFormatDetails.fmt_map+(videoFormatDetails.fmt_map?','+ovformat:''),true);
+				//console.log(getFlashVar("fmt_map")+' '+getFlashVar("vq"));
+			}
 			videoFormat=selNewValue;
 			MIMEString=videoFormatDetails.MIMEString;
 		}
