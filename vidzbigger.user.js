@@ -573,6 +573,7 @@ vsiteInitFun=function(){
 		scriptStyles.push("#watch-views-div{width:120px;}");
 		scriptStyles.push("#watch-rating-div{width:220px;}");
 		scriptStyles.push("#ratingWrapper{width:166px;}");
+		scriptStyles.push(".comments-reply-form{margin-left:0px;}");
 		//scriptStyles.push("#search-form{padding-left:270px;}");
 		//scriptStyles.push("#save-changes-div{display:block;}");
 		//scriptStyles.push(".links{padding-bottom:0px;}");
