@@ -3068,9 +3068,9 @@ function getVideoFormatDetails(vFormat){//awesome
 		case 22:// MPEG-4 H.264 HQ format
 			sVq="2";sFmt="22/1280x720/9/0/115";sMIME="video/mp4";iQI=7;jq="large";break;
 		case 34:
-			sVq="2";sFmt="34/640x360/9/0/115";sMIME="video/mp4";iQI=4;jq="medium";break;
+			sVq="2";sFmt="34/640x360/9/0/115";sMIME="video/mp4";iQI=4;jq="large";break;
 		case 35:
-			sVq="2";sFmt="35/854x480/9/0/115";sMIME="video/mp4";iQI=6;jq="medium";break;
+			sVq="2";sFmt="35/854x480/9/0/115";sMIME="video/mp4";iQI=6;jq="large";break;
 		case 37:
 			sVq="2";sFmt="37/1920x1080/9/0/115";sMIME="video/mp4";iQI=8;jq="hd720";break;
 		default:// Unknown format
