@@ -44,7 +44,7 @@
 //*******************************************************************************//
 //******************************************************************************//
 
-var vidz_Version=0.070;
+var vidz_Version=0.071;
 var startTime=new Date().getTime();
 var vFlashVars="";
 var detectn=false;
@@ -2626,7 +2626,7 @@ unwin.p_vidzbShowPrefs=function(){
 	//http://www.youtube.com/my_speed
 	
 	prHTM+='<input type="button" id="madbtn" value="Reset Player" />';
-	VBlistenersToAdd.push(createPendingEventObject('madbtn','click',reloadPlayer,true));
+	VBlistenersToAdd.push(createPendingEventObject('madbtn','click',function(){reloadPlayer(true)},true));
 	
 	//prHTM+='<input type="button" value="Save" />';
 	prHTM+='<br/><br/><div style="float:right;margin-right:0px;position:relative;top:-4px;text-align:right;">';
@@ -3001,8 +3001,8 @@ var gsPlayerChangeReady=function(s){if(s==0){var node1='playingall_PL',node2='PL
 var gsPlayerReady=function(playerId){document.getElementById("movie_player").addEventListener("onStateChange",'gsPlayerChangeReady');}
 GM_addScript('var gsPlayerChangeReady='+gsPlayerChangeReady.toString()+';var gsPlayerReady='+gsPlayerReady.toString());
 }// Reloads the player by removing it from the DOM tree and inserting it again in the same position// If the video is substituted by an icon,it won't do anything (a reload isn't necessary)
-function reloadPlayer(){
-	if(!unwin.allowPlayerReload){
+function reloadPlayer(force){
+	if(!force && !unwin.allowPlayerReload){
 		console.log("Allow Player Reload must be enabled for this feature");
 		return;
 	}
