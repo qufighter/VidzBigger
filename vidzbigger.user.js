@@ -547,11 +547,20 @@ vsiteInitFun=function(){
 		unwin.ids_left_column='watch-panel';
 		unwin.ids_right_column='watch-sidebar';
 		unwin.ids_title='watch-headline';
-		unwin.ids_header='pagetop';
+		unwin.ids_header='pagebottom';
+		unwin.ids_header2='pagetop';
 		unwin.ids_footer='footer';
-		//unwin.ids_footer2='copyright';
+		//unwin.ids_footer2='pagebottom';
 		unwin.ids_downloadLinks='watch-info';
 		unwin.watchStrings='watch?';
+//		unwin.ignoreList=['page','quicklist'];
+//		unwin.extraModControls='quicklist';
+
+		scriptStyles.push("#quicklist{position:relative;padding-bottom:11em;}");
+		scriptStyles.push("#pagebottom{overflow:hidden;height:140px;}");
+//		scriptStyles.push("#footer-container{display:none;}");
+//		scriptStyles.push("#footer{padding-bottom:0px;}");
+		
 		
 		scriptStyles.push("#watch-description-body{max-width:"+(unwin.colWidth-138)+"px;}");
 		scriptStyles.push(".video-mini-title{max-height:none}");
@@ -1482,9 +1491,13 @@ unwin.vidzb_oneTimeSetupAndResize=function(){
 	var newLeftCol=unwin.vidzb_GrabNode(unwin.ids_left_column);
 	var newRigtCol=unwin.vidzb_GrabNode(unwin.ids_right_column);
 
+	
+
 	//r div?? typically this was done search:GTO599 //append title to heade
 	n_vb_div_header.appendChild(newHeader),n_vb_div_header.appendChild(newHeader2),n_vb_div_header.appendChild(newHeader3),n_vb_div_header.appendChild(n_vb_div_title),n_vb_div_footer.appendChild(newFooter),n_vb_div_footer.appendChild(newFooter2),n_vb_div_left.appendChild(newLeftCol),n_vb_div_right.appendChild(newRigtCol),n_vb_div_title.appendChild(newVideoTitle),n_vb_div_midl.appendChild(newVideoItself);                 // _vt(unwin.ids_vb_midl).
-	
+//	if(unwin.extraModControls){
+//		newVideoItself.appendChild(unwin.vidzb_GrabNode(unwin.extraModControls));
+//	}
 	//if( typeof(reinstateHiddenVideo)=='function'){reinstateHiddenVideo(newVideoItself);}
 	
 	//add after creation!
@@ -1527,6 +1540,15 @@ unwin.vidzb_oneTimeSetupAndResize=function(){
 	initialYousableSetup();
 	//OK now REALLY hide everything!!
 	unwin.vidzb_hideEverythingNotUs();
+	
+	//now show everything else
+	if(unwin.ignoreList){
+		for(var i=0,l=unwin.ignoreList.length;i<l;i++){
+			if(_vt(unwin.ignoreList[i])){
+				$g(unwin.ignoreList[i]).style.display='block';
+			}
+		}
+	}
 }
 
 //INitial setup and resize of elements.  
