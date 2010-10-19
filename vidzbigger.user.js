@@ -549,16 +549,18 @@ vsiteInitFun=function(){
 		unwin.ids_title='watch-headline';
 		unwin.ids_header='pagebottom';
 		unwin.ids_header2='pagetop';
+		//unwin.ids_header3='watch-owner';
 		unwin.ids_footer='footer';
 		//unwin.ids_footer2='pagebottom';
 		unwin.ids_downloadLinks='watch-info';
 		unwin.watchStrings='watch?';
-//		unwin.ignoreList=['page','quicklist'];
+		unwin.ignoreList=['page','watch-owner'];
 //		unwin.extraModControls='quicklist';
 
 		scriptStyles.push("#quicklist{position:relative;padding-bottom:11em;}");
-		scriptStyles.push("#pagebottom{overflow:hidden;height:140px;}");
-//		scriptStyles.push("#footer-container{display:none;}");
+		scriptStyles.push("#quicklist-bar{margin-right:160px;}");
+		scriptStyles.push("#pagebottom{overflow:hidden;height:150px;}");
+		scriptStyles.push("#footer-container{display:none;}");
 //		scriptStyles.push("#footer{padding-bottom:0px;}");
 		
 		
@@ -1415,6 +1417,7 @@ unwin.vidzb_apply_selected_fixes=function(){
 		var sbHeight=(totalWindowHeight-38);//arrows accounted4, and height of scroll bar removed frm distane it can travel
 		var r=totalWindowHeight/bodyHeight;
 		var hob=Math.ceil(r*sbHeight);
+		//console.log(unwin.fssnapHeight);uncomment this line to "fix"
 		var scp = (unwin.fssnapHeight/(bodyHeight-totalWindowHeight));
 		var isp = 1 - scp;
 		var fff = (scp * bodyHeight) + (isp*19) - + (scp*(19+hob));
@@ -1539,13 +1542,25 @@ unwin.vidzb_oneTimeSetupAndResize=function(){
 	//}
 	initialYousableSetup();
 	//OK now REALLY hide everything!!
-	unwin.vidzb_hideEverythingNotUs();
-	
+	unwin.vidzb_hideEverythingNotUs(document.body);
 	//now show everything else
+	unwin.showIgnoreList();
+}
+
+unwin.showIgnoreList=function(){
 	if(unwin.ignoreList){
 		for(var i=0,l=unwin.ignoreList.length;i<l;i++){
 			if(_vt(unwin.ignoreList[i])){
 				$g(unwin.ignoreList[i]).style.display='block';
+			}
+		}
+	}
+}
+unwin.hideIgnoreList=function(){
+	if(unwin.ignoreList){
+		for(var i=0,l=unwin.ignoreList.length;i<l;i++){
+			if(_vt(unwin.ignoreList[i])){
+				$g(unwin.ignoreList[i]).style.display='none';
 			}
 		}
 	}
@@ -1771,14 +1786,15 @@ unwin.handleColumnAd=function(){
 	_vt('n_vb_div_adz1').innerHTML=unwin.vidzbadd1_html;
 }
 
-unwin.vidzb_hideEverythingNotUs=function(){
-	var cNodes=document.body.childNodes;
+unwin.vidzb_hideEverythingNotUs=function(start){
+	var cNodes=start.childNodes;
 	for(var x=0, l=cNodes.length;x<l;x++){
 		if(cNodes[x].id=='vizbigger_all_content_holder' || cNodes[x].id=='vidzbigger_prefs_menu'){
-			return;
+			continue;
 		}else{
 			if(cNodes[x].style){
 				cNodes[x].style.display="none";//onsecondthought
+				//unwin.vidzb_hideEverythingNotUs(cNodes[x]);
 			}
 		}
 	}
@@ -3961,9 +3977,11 @@ function readyToVidsBig(){
 			_vt(unwin.ids_vb_left).style.display='none';
 			_vt(unwin.ids_vb_rigt).style.display='none';
 			_vt(unwin.ids_vb_foot).style.display='none';
+			unwin.hideIgnoreList();
 			unwin.forcevidzb_apply_selected_fixes();
 		}
 		unwin.leaveFullscreen=function(){
+			
 			unwin.fullscreenmode=false
 			_vt(unwin.ids_vb_midl).style.marginLeft=unwin.oldValue;
 			_vt(unwin.ids_vb_head).style.display='block';
@@ -3972,6 +3990,7 @@ function readyToVidsBig(){
 			_vt(unwin.ids_vb_foot).style.display='block';
 			document.body.style.height="auto";
 			document.body.style.minHeight="0px";
+			unwin.showIgnoreList();
 			unwin.forcevidzb_apply_selected_fixes();
 		}
 
@@ -3991,8 +4010,34 @@ function readyToVidsBig(){
 			}else if(theElem.id=='watch-comments-show-more-button'){
 				window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},3000);
 			}
+			
+			window.setTimeout(function(){
+				handleQuicklistMin();
+				if(theElem.id=='quicklist-title' || theElem.parentNode.id=='quicklist-title' || theElem.id=='quicklist-title-button' || theElem.parentNode.id=='quicklist-title-button'){
+					var mu=document.getElementsByClassName('yt-uix-button-menu');
+					for(var i=0,l=mu.length;i<l;i++){
+						var amt=27;
+						if(_vt('quicklist-title-button'))amt+=unwin.getElementYpos($g('quicklist-title-button'));
+						mu[i].style.top=amt+'px';
+					}
+				}
+				
+			},30);
+			
 		}
-		
+		function handleQuicklistMin(){
+			var ql=document.getElementById('quicklist');
+			if(ql){
+				if(ql.className=="passive min"){
+					ql.style.bottom="0px";
+					ql.parentNode.style.height="27px !important";
+				}else{
+					ql.style.bottom="auto";
+					ql.parentNode.style.height="150px !important";
+				}
+			}
+		}
+		handleQuicklistMin();
 		//NOT in share_inline?v=dfsdf
 		//not /my_profile_theme_background_frame
 		//chref.indexOf('next')<=0
@@ -4333,7 +4378,7 @@ function readyToVidsBig(){
 
 function vidzbiggerCheckVersion(){
 	versioncheckurl='http://www.vidzbigger.com/version.php?version='+vidz_Version+'&watch='+unwin.isInWatchMode+'&png24='+unwin.prefer_png24bits;
-	var nowViewing='&url='+escape(window.location)+'&title='+escape(document.title);unwin.versioncheckurl=new String(versioncheckurl+nowViewing);
+	var nowViewing='&url='+escape(window.location)+'&title='+escape(document.title);unwin.versioncheckurl=new String(versioncheckurl+nowViewing);//unwin.versioncheckurl version not used here
 	if(unwin.shareVideoViewStatistics){
 	versioncheckurl+=nowViewing//know
 	}
