@@ -1540,7 +1540,7 @@ unwin.vidzb_oneTimeSetupAndResize=function(){
 	//	titlePosY=unwin.getElementYpos($g(unwin.ids_vb_titl));
 	//	titleHeight=unwin.getElementHeight($g(unwin.ids_vb_titl));
 	//}
-	initialYousableSetup();
+	//initialYousableSetup();
 	//OK now REALLY hide everything!!
 	unwin.vidzb_hideEverythingNotUs(document.body);
 	//now show everything else
@@ -4047,7 +4047,7 @@ function readyToVidsBig(){
 			//	alert('ok'+chref.indexOf(unwin.watchStrings)+_vt(unwin.ids_video_holder));
 			//alert(unwin.watchStrings + chref.indexOf(unwin.watchStrings));
 		if(chref.indexOf('contact.php')<=0 && ((chref.indexOf(unwin.watchStrings)>7) &&  _vt(unwin.ids_video_holder))){
-			if(!unwin.columnViewMode)initialYousableSetup();
+			if(!unwin.columnViewMode)0;//initialYousableSetup();
 			else{
 				//ARE WE ON A VIDEO PAGE???
 			  unwin.isInWatchMode=true;
