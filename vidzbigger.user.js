@@ -6,6 +6,9 @@
 // @include       http://youtube.com/*
 // @include       http://*.youtube.tld/*
 // @include       http://youtube.tld/*
+// @include       https://youtube.com/*
+// @include       https://*.youtube.tld/*
+// @include       https://youtube.tld/*
 // @include       http://video.google.tld/*
 // @include       http://www.dailymotion.com/*
 // @include       http://www.metacafe.com/*
@@ -560,7 +563,7 @@ vsiteInitFun=function(){
 		scriptStyles.push("#quicklist{position:relative;padding-bottom:11em;}");
 		scriptStyles.push("#quicklist-bar{margin-right:160px;}");
 		scriptStyles.push("#pagebottom{overflow:hidden;}");
-		scriptStyles.push("#footer-container{display:none;}");
+		//scriptStyles.push("#footer-container{display:none;}");
 //		scriptStyles.push("#footer{padding-bottom:0px;}");
 		
 		
@@ -918,8 +921,9 @@ var lOpVideoWidths=[320,480,640,800,1024,1280,1600,2048,4096,8192,16384];
 var lOpMinVideoWidths=[128,256,320,340,360,380,480,550,640,800,1024];
 var lOpCommentCounts=[10,15,20,30,50,75,100,128,256,320,480,500];
 var lOpColWidth=[150,200,250,300,320,340,360,380,400,420,440,480,550,640,800];
-var lOpPosQualities=[37,22,35,34,18];//quality priorities
-var lOpDisplayQualities={37:{v:37,q:'HD+ 1080p',d:'MPEG-4 H.264 HD 1080p'},22:{v:22,q:'HD+ 720p',d:'MPEG-4 H.264 HD 720p'},35:{v:35,q:'HD',d:'FLV H.264 35 HQ'},34:{v:34,q:'HD-',d:'FLV H.264 34 HQ'},18:{v:18,q:'HQ',d:'MPEG-4 H.264 18 HQ'}};
+var jslOpPosQualities={'highres':40,'hd1080':37,'hd720':22,'default':35,'default':34,'medium':18};//quality priorities
+var lOpPosQualities=[37,22,35,34,18];//quality priorities OLD
+var lOpDisplayQualities={40:{v:40,q:'HD++ >1080p',n:'highres',d:'Greater than 1080p'},37:{v:37,q:'HD+ 1080p',n:'hd1080',d:'MPEG-4 H.264 HD 1080p'},22:{v:22,q:'HD+ 720p',n:'hd720',d:'MPEG-4 H.264 HD 720p'},35:{v:35,q:'HD',n:'large',d:'FLV H.264 35 HQ'},34:{v:34,q:'HD-',n:'large',d:'FLV H.264 34 HQ'},18:{v:18,q:'HQ',n:'medium',d:'MPEG-4 H.264 18 HQ'}};
 var locales={0:{c:'US',n:'United States'},1:{c:'CA',n:'Canada'},2:{c:'DE',n:'Germany'},3:{c:'FR',n:'France'},4:{c:'JP',n:'Japan'},5:{c:'UK',n:'United Kingdom'}}
 
 unwin.lastTimer=0;
@@ -947,6 +951,7 @@ var vidzbigSITESdisabled='';
 unwin.vidzb_tf_prefs=[];
 unwin.vidzb_tf_prefs['allowPlayerReload']=true;
 unwin.vidzb_tf_prefs['columnViewMode']=true;
+unwin.vidzb_tf_prefs['classicColumnViewMode']=false;
 unwin.vidzb_tf_prefs['invertColorScheme']=false;
 unwin.vidzb_tf_prefs['invertPrefColorScheme']=false;
 unwin.vidzb_tf_prefs['autoScrollPastHeader']=true;
@@ -969,7 +974,7 @@ unwin.vidzb_tf_prefs['preventVtBlackBars']=true;// prevent Vt black bars (above 
 unwin.vidzb_tf_prefs['preventHzBlackBars']=false;		// left and right
 unwin.vidzb_tf_prefs['chkAspectRatioXml']=true;		// download xml to verify aspect ratio
 unwin.vidzb_tf_prefs['defaultWideAspect']=false;		// default Aspect
-unwin.vidzb_tf_prefs['enableTopVidzBrowser']=true;
+unwin.vidzb_tf_prefs['enableTopVidzBrowser']=false;
 unwin.vidzb_tf_prefs['enableChannelBrowser']=false;
 unwin.vidzb_tf_prefs['useNonFlashPlayer']=false;
 unwin.vidzb_tf_prefs['dissableAnnotations']=false;
@@ -980,8 +985,8 @@ unwin.vidzb_tf_prefs['donotautobuffer']=false;
 unwin.vidzb_tf_prefs['positionVideoAutomatically']=true;//owns the b lo
 unwin.vidzb_tf_prefs['centerVideoVertically']=true;//no effect?
 unwin.vidzb_tf_prefs['scaleVideoAtPageBottom']=true;
-unwin.vidzb_tf_prefs['usefixedpositionproof']=false;//identically named prefs like this need to either be eliminated or the order follow this for precompliation to work
-unwin.vidzb_tf_prefs['usefixedposition']=detectn?false:true;
+unwin.vidzb_tf_prefs['usevidzbfixedposproof']=false;//identically named prefs like this need to either be eliminated or the order follow this for precompliation to work
+unwin.vidzb_tf_prefs['usevidzbfixedpos']=true;//detectn?false:true;
 if(!detectn)unwin.vidzb_tf_prefs['allowUnsafeWindow']=true;
 else unwin.allowUnsafeWindow=true;
 unwin.vidzb_tf_prefs['enableAutoReload']=false;
@@ -996,7 +1001,7 @@ unwin.vidzb_tf_prefs['vidzb_allowMyObnoxiousAds']=true; //allow vidzbigger ads t
 unwin.vidzb_tf_prefs['autoExpandVideoDescriptions']=false;
 unwin.vidzb_tf_prefs['autoConfirmAdultVideos']=false;
 unwin.vidzb_tf_prefs['snapfullscreenmode']=true; //UNSPECIFIED (new value), resolves to true by default based on auto configuration
-unwin.vidzb_tf_prefs['aspheadersnapfull']=false;
+unwin.vidzb_tf_prefs['aspheadersnapfull']=true;
 unwin.vidzb_tf_prefs['prefFlagPositionFixed']=false;
 unwin.vidzb_tf_prefs['delayVidzBiggerInit']=false;//delays load (1sec) so other plugins (youtrace) can finish loading first
 unwin.vidzb_tf_prefs['precompMainFun']=true;//enable 'pre-compilation' of specified function, basically evaluates TF prefs once and defines a new function
@@ -1173,9 +1178,9 @@ unwin.forcevidzb_apply_selected_fixes=function(){
 	}
 	if(_vt('vidzbigger_prefs_menu'))$g('vidzbigger_prefs_menu').style.position=unwin.prefFlagPositionFixed?'fixed':'absolute';
 	if(_vt(unwin.ids_vb_midl)){
-		if ((unwin.usefixedposition)){
+		if ((unwin.usevidzbfixedpos)){
 			$g(unwin.ids_vb_midl).style.position='fixed';
-			if(detectn&&unwin.usefixedpositionproof)$g(unwin.ids_vb_midl).getElementsByTagName('embed')[0].style.border="3px solid red";
+			if(detectn&&unwin.usevidzbfixedposproof)$g(unwin.ids_vb_midl).getElementsByTagName('embed')[0].style.border="3px solid red";
 		}else{
 			$g(unwin.ids_vb_midl).style.position='absolute';
 		}
@@ -1205,7 +1210,7 @@ unwin.vidzb_apply_selected_fixes=function(){
 	var rightColTopPush=0;
 	var colWidth=new Number(unwin.colWidth);//col width 360
 	var extraVideoSpace=0;
-	var isStupdMode=!unwin.usefixedposition;//detectn;
+	var isStupdMode=!unwin.usevidzbfixedpos;//detectn;
 	var bodyHeight=unwin.getElementHeight(document.body);
 	
 	if (unwin.snapfullscreenmode){
@@ -1413,9 +1418,9 @@ unwin.vidzb_apply_selected_fixes=function(){
 		$g('lastTimer').innerText=unwin.lastTimer;//probably slows it down but good for dev
 	}
 	
-	if (unwin.snapfullscreenmode){
-		var sbHeight=(totalWindowHeight-38);//arrows accounted4, and height of scroll bar removed frm distane it can travel
-		var r=totalWindowHeight/bodyHeight;
+	if(unwin.snapfullscreenmode){
+		var sbHeight=(totalWindowHeight-36);//arrows accounted4, and height of scroll bar removed frm distane it can travel
+		var r=sbHeight/bodyHeight;
 		var hob=Math.ceil(r*sbHeight);
 		//console.log(unwin.fssnapHeight);uncomment this line to "fix"
 		var scp = (unwin.fssnapHeight/(bodyHeight-totalWindowHeight));
@@ -1429,7 +1434,7 @@ unwin.vidzb_apply_selected_fixes=function(){
 			div_indi.setAttribute('id',unwin.ids_vb_indi);
 			div_indi.setAttribute('style','position:absolute;top:'+fff+'px;right:0px;width:2px;height:'+hob+'px;background-color:#000;');
 			document.body.appendChild(div_indi);
-			div_indi.addEventListener('click',function(e){vidzb_cancelFulscButton()},false);
+			div_indi.addEventListener('mousedown',function(e){vidzb_cancelFulscButton()},false);
 		}
 	}
 	
@@ -1459,7 +1464,7 @@ unwin.vidzb_oneTimeSetupAndResize=function(){
 	n_vb_div_content=document.createElement('div'),n_vb_div_content.setAttribute('id',unwin.ids_vb_cont),n_vb_div_content.setAttribute('style','');
 	n_vb_div_left=document.createElement('div'),n_vb_div_left.setAttribute('id',unwin.ids_vb_left),n_vb_div_left.setAttribute('style','float:left;width:'+unwin.colWidth+'px;');
 	n_vb_div_right=document.createElement('div'),n_vb_div_right.setAttribute('id',unwin.ids_vb_rigt),n_vb_div_right.setAttribute('style','float:right;width:'+unwin.colWidth+'px;');
-	n_vb_div_midl=document.createElement('div'),n_vb_div_midl.setAttribute('id',unwin.ids_vb_midl),n_vb_div_midl.setAttribute('style','position:'+(unwin.usefixedposition?'fixed':'absolute')+';margin-left:'+(10+unwin.colWidth)+'px;margin-right:'+(10+unwin.colWidth)+'px;');
+	n_vb_div_midl=document.createElement('div'),n_vb_div_midl.setAttribute('id',unwin.ids_vb_midl),n_vb_div_midl.setAttribute('style','position:'+(unwin.usevidzbfixedpos?'fixed':'absolute')+';margin-left:'+(10+unwin.colWidth)+'px;margin-right:'+(10+unwin.colWidth)+'px;');
 	//TEST STYLES-borders for all boxen
 	/*
 	_vt(unwin.ids_vb_hold).style.border="1px solid red";
@@ -1857,7 +1862,7 @@ unwin.setVideoSize=function(w,h,totalWindowHeight,atBtm,scr){
 	}
 	
 	if(unwin.fullscreenmode){
-		//if(scr>-unwin.headerHeight && unwin.usefixedposition) fvp=-unwin.headerHeight-scr;
+		//if(scr>-unwin.headerHeight && unwin.usevidzbfixedpos) fvp=-unwin.headerHeight-scr;
 		//else 
 			fvp=0;
 		//fvp+=20
@@ -1926,30 +1931,30 @@ unwin.applyVideoSizePosz=function(w,h,x,y){
 }
 unwin.linksByURL=[];
 //THIS ONE MAKES ALL LINKS HIGH QUALITY 
-unwin.vidzb_fmt18ALlLinks=function(){
-	unwin.vidzb_animateAllVideoIcons();
-	if(unwin.enablePlayNext)unwin.vidzb_playnextlinks();
-	if(unwin.useHighQuality !=true) return;
-	unwin.linksByURL=[];
-	var allLinks=document.getElementsByTagName('a');
-	var gotcount=0;
-	for(var x=0,l=allLinks.length;x<l;x++){
-		var chref=new String(allLinks[x].href);
-		
-		if(chref.indexOf('youtube')>0 && chref.indexOf('watch')>0 && chref.indexOf('fmt=18')<0 && chref.indexOf('fmt=22')<0 && chref.indexOf('checkedhd')<0 && chref.indexOf('#')<0 && chref.indexOf('feature=hd')<0){
-			var myHref=new String(allLinks[x].href);
-			if(myHref.indexOf('&')>0)
-				myHref=myHref.substr(0,myHref.indexOf('&'));
-			if( unwin.flipVideo )allLinks[x].href+='&flip=1';
-			allLinks[x].href+='&fmt=18';
-			if(!unwin.linksByURL[myHref]) unwin.linksByURL[myHref]=[];
-			unwin.linksByURL[myHref].push(allLinks[x]);
-			gotcount++;
-		}
-		
-	}
-	if(gotcount>0) vidzb_visualize(allLinks);//Youtube HD Suite functionality to check for HQ version and update each link
-}
+//unwin.vidzb_fmt18ALlLinks=function(){
+//	unwin.vidzb_animateAllVideoIcons();
+//	if(unwin.enablePlayNext)unwin.vidzb_playnextlinks();
+//	if(unwin.useHighQuality !=true) return;
+//	unwin.linksByURL=[];
+//	var allLinks=document.getElementsByTagName('a');
+//	var gotcount=0;
+//	for(var x=0,l=allLinks.length;x<l;x++){
+//		var chref=new String(allLinks[x].href);
+//		
+//		if(chref.indexOf('youtube')>0 && chref.indexOf('watch')>0 && chref.indexOf('fmt=18')<0 && chref.indexOf('fmt=22')<0 && chref.indexOf('checkedhd')<0 && chref.indexOf('#')<0 && chref.indexOf('feature=hd')<0){
+//			var myHref=new String(allLinks[x].href);
+//			if(myHref.indexOf('&')>0)
+//				myHref=myHref.substr(0,myHref.indexOf('&'));
+//			if( unwin.flipVideo )allLinks[x].href+='&flip=1';
+//			allLinks[x].href+='&fmt=18';
+//			if(!unwin.linksByURL[myHref]) unwin.linksByURL[myHref]=[];
+//			unwin.linksByURL[myHref].push(allLinks[x]);
+//			gotcount++;
+//		}
+//		
+//	}
+//	if(gotcount>0) vidzb_visualize(allLinks);//Youtube HD Suite functionality to check for HQ version and update each link
+//}
 
 window.addQueue=function(e){
 	var turl=vidzb_getEventTarget(e),n='the_next';
@@ -2310,10 +2315,9 @@ unwin.p_vidzbShowPrefs=function(){
 		if(unwin.vidzbigenabled && unwin.vidzbigSITEenabled){
 			prHTM+=unwin.p_beginPrefSectn('layout','Instant Layout');
 
-			prHTM+=unwin.p_createPrefCheckbox('columnViewMode','Enable Column Mode (on reload)','This enables the primary feature of VidzBigger, keeping the video on the screen at all times (and possibly filling the entire window).  This will almost always cause the player to be reloaded once until document-start is completed.\\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
+			//prHTM+=unwin.p_createPrefCheckbox('allowPlayerReload','Allow Player Reload','Several features require this in order to function.  JSAPI cannot listen for player state changes without this feature enabled.  Attempts to manually reload ore reset the player (or select different qualities) may also not work if this is unchecked.  This will serve as a method of disabling JSAPI and reducing the number of player reloads that can occur.\\n\\nDefault Value: ON');
 			
-			if(unwin.columnViewMode){
+			if(unwin.classicColumnViewMode){
 				//unwin.myvideoalign="RIGHT";//"LEFT"CENTER"RIGHT";
 				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_myvideoalign','change',vidzb_clickPrefSelect,true));
 				prHTM+=unwin.p_beginPrefItemRow()+'Video Layout <select id="vbg_prefInput_myvideoalign">';
@@ -2379,19 +2383,22 @@ unwin.p_vidzbShowPrefs=function(){
 				//prHTM+=unwin.p_createPrefCheckbox('positionPersistently','Position Persistently','This setting forces an update each time the scroll event is fired, leading to more realistic display but also more updates fire which can contribute to scroll lag!\\n\\nDefault Value: OFF');
 				prHTM+=unwin.p_createPrefCheckbox('positionVideoAutomatically','Position & Scale video automatically [more jumpy]','Window 1024x768 or smaller should probably check this,1280x1024 should not.  For larger screen sizes consider your window aspect ratio-Widescreen generally performs better with this option ON.\\n\\nTrivia:  When this option is off,search box and window title remained in fixed position for ease of use specifically to make use of the extra space at 1280 or larger 4:3 (b0x) aspect.  This is the reason turning this option off performs so poorly at 800 and 1024,since the title takes up so much space (and the video really ought to be up-sized to fill the space as the user scrolls down and more space becomes available,which is precisely what this option does)!\\n\\nDefault Value: ON');
 				//prHTM+=unwin.p_createPrefCheckbox('centerVideoVertically','Center Video Vertically Automatically','Only valid if Position Automatically is ON.\\n\\nThis will attempt to center the video in vertical space.  DOES NOT apply when window scroll is near page TOP or BOTTOM,but when scrolling is centered.  Perhaps center vartically when scroll is centered would be more apt title.\\n\\nDoes not apply if the video is already being crushed vertically (ie: video must be at full width,with no black borders on left and right side).  If there is extra space below the video,the video will jump down to a centered position.  The idea behind this is that your mousewheel cannot scroll the window unless its over whitespace,so we distribute the whitespace around the video so that its easier to access for your scrolling pleasure.  Also you may notice this &ldquo;feature&rdquo;when Scale Video at Page Bottom is on.  Any feedback welcome.\\n\\nYou may also note,this option is rendered non-effective by unchecking Prevent Extra Black Bars Above/Below.\\n\\nDefault Value: ON',1);
-				prHTM+=unwin.p_createPrefCheckbox('scaleVideoAtPageBottom','Allow Position & Scale at page Footer','When you get to the bottom of the page,there is this pesky thing that happens where the video covers up the search box and whatever other legal nonsense and potentially useful links exist at the bottom of the page!  I don&rsquo;t necessarly endorce ignoring legal stuff so by default the video will shrink so you can see all that.\\n\\nDefault Value: ON');
 				prHTM+=unwin.p_createPrefCheckbox('columnPriorityComments','Comment column First (toggle column order)','In 2 column mode this setting determines if the comment column will be added first or second\\n\\nIn 3 column mode this determines if the comments are on the left or the right.\\n\\nDefault Value: OFF');
 				prHTM+=unwin.p_createPrefCheckbox('columnScrollIndependent','Scroll columns independent of page (experimental)','Also hides the footer \\n\\nBe aware that checking Auto Scroll Past Header causes the page to get tripple scroll bars but larger video and column size in 2 col mode. \\n\\nDefault Value: OFF');
-				prHTM+=unwin.p_createPrefCheckbox('autoScrollPastHeader','Auto Scroll Past Header (bigger video on load)','Jumps the page down past the header on page load which makes the video area as large as possible.\\n\\nThis is a nice option for 2 column mode. \\n\\nDefault Value: ON');
-				prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Auto Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
-				if(unwin.snapfullscreenmode){
-					prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at past header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',2);
-					//prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  It will probably stop working soon.';
-				}
 			}
+
+			prHTM+=unwin.p_createPrefCheckbox('scaleVideoAtPageBottom','Allow Position & Scale at page Footer','When you get to the bottom of the page,there is this pesky thing that happens where the video covers up the search box and whatever other legal nonsense and potentially useful links exist at the bottom of the page!  I don&rsquo;t necessarly endorce ignoring legal stuff so by default the video will shrink so you can see all that.\\n\\nDefault Value: ON');
+
+			prHTM+=unwin.p_createPrefCheckbox('autoScrollPastHeader','Auto Scroll Past Header (bigger video on load)','Jumps the page down past the header on page load which makes the video area as large as possible.\\n\\nThis is a nice option for 2 column mode. \\n\\nDefault Value: ON');
+			prHTM+=unwin.p_createPrefCheckbox('aspheadersnapfull','Snap fullscreen at header point','When auto scrolled past header auto snap fullscreen as well, or any time you reach that point',1);
+			prHTM+=unwin.p_createPrefCheckbox('snapfullscreenmode','Snap Fullscreen at Scroll Max','Scroll the scroll bar to the marker and gain full window mode, scroll again to leave fullscreen and continue reading comments. \\n\\nDefault Value: ON',(unwin.snapfullscreenmode&&unwin.autoScrollPastHeader)?1:0);
+			//if(unwin.snapfullscreenmode){
+				//prHTM+='Drag this <a href="javascript:yt.www.watch.player.enableWideScreen();void(0);">ToggleFullscreen</a> bookmarklet to your toolbar, if it breaks in the future delete it.  It will probably stop working soon.';
+			//}
+
 			prHTM+='</div>';//end layout hider div
-			
-			
+
+
 //			prHTM+=unwin.p_beginPrefSectn('display','Elements');
 //			
 //			z='Dissable Elements';
@@ -2403,30 +2410,49 @@ unwin.p_vidzbShowPrefs=function(){
 //			prHTM+='</div>';//end layout hider div
 			
 			prHTM+=unwin.p_beginPrefSectn('display','Display');
+			
+			prHTM+=unwin.p_createPrefCheckbox('columnViewMode','Keep Video On Screen','Essential for keeping video on screen while scrolling.  This is a simple 2 column mode without much configuration.  Selecting Classic Configurable Column Mode below will allow more configurability but will also render other options non-functional.  The option will only show up after applying and saving this one and re-opening preferences.  \\n\\nDefault Value: ON');
+			
+			if(unwin.columnViewMode)
+				prHTM+=unwin.p_createPrefCheckbox('classicColumnViewMode','Classic Configurable Column Mode (on reload)','These features are defunct since they rely on removing the player from the page and placing it into a more rigid structure that is in some ways more configurable.  Many primary features are disabled by this approach, while other features require this approach.  Use your judgement and find what works best for you.  Classic mode is notoriously bad at selecting the correct video quality, auto pausing videos, and may also lead to videos starting twice.  If this is okay you may prefer the configurability of classic mode.\\n\\nDefault Value: OFF\\n\\nHistoric Description:This enables the primary feature of VidzBigger, keeping the video on the screen at all times (and possibly filling the entire window).  This will almost always cause the player to be reloaded once until document-start is completed.',1);
+			
+			
+			
 			//ColWidth
-			VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_colWidth','change',vidzb_clickPrefSelect,true));
-			prHTM+=unwin.p_beginPrefItemRow()+'Column Width <select id="vbg_prefInput_colWidth">';
-				for(i in lOpColWidth){
-					if(unwin.colWidth==lOpColWidth[i])checkd=' selected';
-					else checkd='';
-					prHTM+='<option value="'+lOpColWidth[i]+'"'+checkd+'>'+lOpColWidth[i]+'<br/>';
-				}
-			prHTM+="</select>px (On Reload)"+unwin.p_getQuestionMarkImage('Especially cool if you scroll content to a huge size on a high density display or protjector, widescreen ratio display.  You must reload the page to get the real effect of this unfortunately.  Perhaps I can make this more agressive if you require. \\n\\nDefault Value: 360');
-			prHTM+=unwin.p_endPrefItemRow();
+			if(unwin.classicColumnViewMode){
+				VBlistenersToAdd.push(createPendingEventObject('vbg_prefInput_colWidth','change',vidzb_clickPrefSelect,true));
+				prHTM+=unwin.p_beginPrefItemRow()+'Column Width <select id="vbg_prefInput_colWidth">';
+					for(i in lOpColWidth){
+						if(unwin.colWidth==lOpColWidth[i])checkd=' selected';
+						else checkd='';
+						prHTM+='<option value="'+lOpColWidth[i]+'"'+checkd+'>'+lOpColWidth[i]+'<br/>';
+					}
+				prHTM+="</select>px (On Reload)"+unwin.p_getQuestionMarkImage('Especially cool if you scroll content to a huge size on a high density display or protjector, widescreen ratio display.  You must reload the page to get the real effect of this unfortunately.  Perhaps I can make this more agressive if you require. \\n\\nDefault Value: 360');
+				prHTM+=unwin.p_endPrefItemRow();
+			}else{
+				prHTM+=unwin.p_createPrefCheckbox('donotautoplayVideos','Prevent Video Autoplay','Great for the office (or on a slow connection where you need to preload)!  Videos will not play automatically when this box is checked,allowing you to check your volume.  Possible future options might include,auto mute video,if requested.\\n\\nDefault Value: OFF');
+			}
 
 			checkd='';
-			if(unwin.precompMainFun&&compitot>0)checkd=' saved '+Math.floor((compisav/compitot)*100)+ '%';
-			prHTM+=unwin.p_createPrefCheckbox('precompMainFun','Precompile Main Functions (on load)'+checkd,'When the page loads or when you press save, the major functions that get called during scrolling will be &quot;pre-compiled&quot; according to the true false preferences you have selected.  This will improve performance of those functions significantly while also limiting their content and speeding their execution.  To re-enable features the function need to be compiled again which should occur after preferenes are saved, only then will new features that you had checked function properly if this feature is enabled, meaning you will have to save more frequently to get solid previews of the changes you make, however the performance will be improved.  If you are just enabling this feature you will have to reload the page. \\n\\nDefault Value: ON');
 			
-			prHTM+=unwin.p_createPrefCheckbox('usefixedposition','Use \'Fixed\' Position ['+(detectn?'NOT ':'')+'Recommended]','WARNING: will cause video to reload in FireFox when you change the positioning mode.  This setting makes it less laggy when your processor is doing stuff.  It is broken in the current version of Chrome but is default in Firefox!  To use it in Chrome you need to resize the window to get the element to the right spot.  This is a hack solution, so instead the feature is dissabled until the browser is fixed.  IF your using an HTML5 video player then this feature probably makes sense. \\n\\nDefault Value: ON or OFF(chrome)');
-			if(detectn&&unwin.usefixedposition)prHTM+=unwin.p_createPrefCheckbox('usefixedpositionproof','Prove Bug (you must close preferences and then scroll)','This will put a red box on the embed element.  You will see the embed elements red box is rendered where its suppose to be.  You have to resize the window to make the video position itself correctly however.  Oddly if prefrences are open the video positions correctly (because the timer is updated via innerText or innerHTML onscroll, not exactly a solution)',1);
+			if(unwin.classicColumnViewMode){
+				if(unwin.precompMainFun&&compitot>0)checkd=' saved '+Math.floor((compisav/compitot)*100)+ '%';
+				prHTM+=unwin.p_createPrefCheckbox('precompMainFun','Precompile Main Functions (on load)'+checkd,'When the page loads or when you press save, the major functions that get called during scrolling will be &quot;pre-compiled&quot; according to the true false preferences you have selected.  This will improve performance of those functions significantly while also limiting their content and speeding their execution.  To re-enable features the function need to be compiled again which should occur after preferenes are saved, only then will new features that you had checked function properly if this feature is enabled, meaning you will have to save more frequently to get solid previews of the changes you make, however the performance will be improved.  If you are just enabling this feature you will have to reload the page. \\n\\nDefault Value: ON');
+				
+				prHTM+=unwin.p_createPrefCheckbox('usevidzbfixedpos','Use \'Fixed\' Position ['+(detectn?'NOT ':'')+'Recommended]','WARNING: will cause video to reload in FireFox when you change the positioning mode.  This setting makes it less laggy when your processor is doing stuff.  It is broken in the current version of Chrome but is default in Firefox!  To use it in Chrome you need to resize the window to get the element to the right spot.  This is a hack solution, so instead the feature is dissabled until the browser is fixed.  IF your using an HTML5 video player then this feature probably makes sense. \\n\\nDefault Value: ON or OFF(chrome)');
+				if(detectn&&unwin.usevidzbfixedpos)prHTM+=unwin.p_createPrefCheckbox('usevidzbfixedposproof','Prove Bug (you must close preferences and then scroll)','This will put a red box on the embed element.  You will see the embed elements red box is rendered where its suppose to be.  You have to resize the window to make the video position itself correctly however.  Oddly if prefrences are open the video positions correctly (because the timer is updated via innerText or innerHTML onscroll, not exactly a solution)',1);
+			}
 			
 			prHTM+=unwin.p_createPrefCheckbox('prefFlagPositionFixed','Fixed Preference Flag Position (more CPU)','A nice feature to save CPU (in absolute mode) on slower systems, by leaving the prefrence flag at scroll-top\\n\\nEnabling this feature keeps the preference flag on the screen at all times! \\n\\nDefault Value: absolute/OFF');
-			prHTM+=unwin.p_createPrefCheckbox('enableAutoReload','Auto-reload on white failure','When the document fails to load and is blank this feature will detect that and reload the incessantly page after a short delay.  The delay will increase with each retry. \\n\\nDefault Value: OFF');
-
+			
+			//prefer_png24bits
+			prHTM+=unwin.p_createPrefCheckbox('prefer_png24bits','Use 24 Bit PNG Images','If this is checked 24 bit PNG with transparncy will be used.\\n\\nOtherwise 8 bit PNG with a 1 bit mask will be used. \\n\\nThe preference flag and any other embeded images will have nicer rounder corners and smoother fades in 24 bit mode at minimal processing expense.  This option is for people who would notice small visual things like this,otherwise the max performance setting is the default.\\n\\nDefault Value: OFF (8 bit)');
+			
+			
 			prHTM+=unwin.p_createPrefCheckbox('enableChannelBrowser','Enable on User Channel Pages','This lets you keep the video on the screen while you read channel comments as well! \\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('enableTopVidzBrowser','Enable Top Vidz, Accounts and Mini-Browser','This allows you to load TopVidz or other webpages /within this frame/. \\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('enablePlayNext','Enable Play Next [&gt;]','This allows you to queue one video to play next after the current video. \\n\\nDefault Value: ON');
+			
+			
+			//prHTM+=unwin.p_createPrefCheckbox('enablePlayNext','Enable Play Next [&gt;]','This allows you to queue one video to play next after the current video. \\n\\nDefault Value: ON');
 			
 	
 			/*
@@ -2440,6 +2466,14 @@ unwin.p_vidzbShowPrefs=function(){
 			prHTM+="</select> (On Load)"+unwin.p_getQuestionMarkImage('Lets you define a maximum quality!  This is especially helpful if you are on crappy internet that is tuned to be just so slow that HD does not buffer in time. \\n\\nDefault Value: HD');
 			prHTM+=unwin.p_endPrefItemRow();
 			*/		
+			prHTM+='</div>';//end display hider div
+			
+			
+			prHTM+=unwin.p_beginPrefSectn('unsupported','Unsupported');
+						
+			prHTM+=unwin.p_createPrefCheckbox('enableTopVidzBrowser','Enable Top Vidz, Accounts and Mini-Browser','This allows you to load TopVidz or other webpages /within this frame/. \\n\\nDefault Value: ON');
+			
+		
 			
 		  if(unwin.siteID == 1)
 			prHTM+=unwin.p_createPrefCheckbox('alwaysShowModControlsUnderVideo','Always show extra controls under video (if installed)','There are many other user scripts besides this one that work great on youtube.  Many of these place extra controls underneath the video.  Normally these are only accessable when you scroll all the way down, however if this box is checked, they will stay on screen all the time under the video.  Controls that load before VidzBigger show initially, while the rest will show after you move the scroll bar.  Check the box at any tiem to toggle.  To add your controls here just append a new DIV position relative to the watch-player-div (or video positioner) (whatever that container is identified by).\\n\\nDefault Value: OFF');
@@ -2447,12 +2481,8 @@ unwin.p_vidzbShowPrefs=function(){
 		  prHTM+=unwin.p_createPrefCheckbox('delayVidzBiggerInit','Delay Load for Extra Mod-Support','Other mods such as YouTraceX will work if they have enough time to finish loading first. \\n\\nDefault Value: OFF',1);
 			  
 			if(unwin.siteID == 1)
-			prHTM+=unwin.p_createPrefCheckbox('enabledownload','Enable Yousable Download Links','This option enables the ez download links, enable at your own risk.\\n\\nDefault Value: OFF');
+			prHTM+=unwin.p_createPrefCheckbox('enabledownload','Enable Yousable Download Links','This feature probably does not work.  This option enables the ez download links, enable at your own risk.\\n\\nDefault Value: OFF');
 			
-			//AUOTCLICK PREFS 
-			prHTM+=unwin.p_createPrefCheckbox('autoExpandVideoDescriptions','Auto-Expand Video Description (on load)','So many people post stupid comments answered by the description.  Showing the full description by default reduces the chance of this and gives useful details about the movie,making it easier to spot blatant advertising (and avoid it this one hopes).\\n\\nDefault Value: ON');
-			//prefer_png24bits
-			prHTM+=unwin.p_createPrefCheckbox('prefer_png24bits','Use 24 Bit PNG Images','If this is checked 24 bit PNG with transparncy will be used.\\n\\nOtherwise 8 bit PNG with a 1 bit mask will be used. \\n\\nThe preference flag and any other embeded images will have nicer rounder corners and smoother fades in 24 bit mode at minimal processing expense.  This option is for people who would notice small visual things like this,otherwise the max performance setting is the default.\\n\\nDefault Value: OFF (8 bit)');
 			//invert scheme
 			prHTM+=unwin.p_createPrefCheckbox('invertColorScheme','Dim Background/Invert Color Scheme (on reload)','Inverts the color scheme dimming the youtube background.\\n\\nDebating the option of including a color chooser for text and background color,let me know if your interested.  Also dimming other elements with transparency or removing them completely is a possibility. \\n\\nCAUTION: beware of firebug inspecting base 64 encoded PNG images after they have been replaced in this step may crash scripts\\n\\nDefault Value: OFF');
 			prHTM+=unwin.p_createPrefCheckbox('invertPrefColorScheme','Invert Preferences Color Scheme','Makes preferences more reader-friendly Default: OFF');
@@ -2470,12 +2500,11 @@ unwin.p_vidzbShowPrefs=function(){
 			prHTM+=unwin.p_createPrefCheckbox('biggerComments',thtm,'Another Feature Thanks to YousableTubeFix\\n\\n500 comments are loaded per page (They are then reversed and the first so many you specify are displayed.  Too many IS SLOW on most compuers).\\n\\nThis can be a little slow on some systems,or generate bugs in 2 column mode. \\n\\nDefault Value: OFF');
 	
 			//AUTOPLAy and QUALITY settings
-			prHTM+=unwin.p_createPrefCheckbox('useHighQuality','Link to HQ/HD Videos, or use <a href="http://www.youtube.com/account#playback/quality" target="_blank">Account Settings</a>','When a youtube page loads,this feature updates all links so that when u click them,you will get the HQ video.  Does not work if you click before the page fully loads,but you can probably watch your links in the status bar as you hover,if it says fmt=18 at the end you are set for HQ.\\n\\nAlso sends an XMLhttp request which checks for fmt=22 which is the latest widescreen HD format.  The second checkbox allows you to enable or disable indicators.\\n\\nSince the whole idea of making Vids Bigger would be to have a closer to widescreen HD expereince,it only makes sense to maximize the video quality by default.  WARNING: does not make much sense at 1024 or 800 pixel width!  Fortunately this is relatively trivial unless you are charged by the megabyte (although I could auto check your window width and turn this on or off automatically if you like,so send feedback if anythings not working for you!). \\n\\nDefault Value: ON');
-			if( unwin.useHighQuality ){
-				prHTM+=unwin.p_createPrefCheckbox('indicateHDQuality','Indicate <span style="background-color:red;font-weight:bold;">&nbsp;HD&nbsp;</span> when available','If we already are linking to the highest quality videos, also tag HD videos with an HD flag.  Youtube seems to be doing this on their own, but for now this feature has more widespread results.  \\n\\nDefault Value: ON',1);
-			}
-			prHTM+=unwin.p_createPrefCheckbox('LoadHighQuality','Else load HD as soon as detected on page load','Not necessarily useful unless the above is turned off.  As soon as an HD/Q (FMT22,FMT35,FMT18) version is detected it is swtiched on support for FMT18 also... basically teh highest avaialable format detected will load.  Dissable the above features and save bandwidth with this...  \\n\\nDefault Value: ON');
-	
+//			prHTM+=unwin.p_createPrefCheckbox('useHighQuality','Link to HQ/HD Videos, or use <a href="http://www.youtube.com/account#playback/quality" target="_blank">Account Settings</a>','When a youtube page loads,this feature updates all links so that when u click them,you will get the HQ video.  Does not work if you click before the page fully loads,but you can probably watch your links in the status bar as you hover,if it says fmt=18 at the end you are set for HQ.\\n\\nAlso sends an XMLhttp request which checks for fmt=22 which is the latest widescreen HD format.  The second checkbox allows you to enable or disable indicators.\\n\\nSince the whole idea of making Vids Bigger would be to have a closer to widescreen HD expereince,it only makes sense to maximize the video quality by default.  WARNING: does not make much sense at 1024 or 800 pixel width!  Fortunately this is relatively trivial unless you are charged by the megabyte (although I could auto check your window width and turn this on or off automatically if you like,so send feedback if anythings not working for you!). \\n\\nDefault Value: ON');
+//			if( unwin.useHighQuality ){
+//				prHTM+=unwin.p_createPrefCheckbox('indicateHDQuality','Indicate <span style="background-color:red;font-weight:bold;">&nbsp;HD&nbsp;</span> when available','If we already are linking to the highest quality videos, also tag HD videos with an HD flag.  Youtube seems to be doing this on their own, but for now this feature has more widespread results.  \\n\\nDefault Value: ON',1);
+//			}
+
 			if(unwin.siteID == 1){
 				prHTM+=unwin.p_createPrefCheckbox('animateVidThumbnails','Animate Video Thumbnails (on hover)','Animates the 3 video thumbnails.  Does not load them unitl you mouse over.  The rate is ~1.5 seconds but can vary if your internet is slow.  If you want an option to simply preload all thumbs or to modify the rate, just ask!  \\n\\nDefault Value: ON');
 				if(unwin.animateVidThumbnails)prHTM+=unwin.p_createPrefCheckbox('alwaysAnimateVidThumbnails','Always Animate All Video Thumbnails (slow)','Animates the icons even if your mouse is not over them.  The rate is the same but there is a 1+(0.2*n) second delay before this starts happening but it probably still happens for all images at close to the same time which may over trafic your intertubes.  \\n\\nDefault Value: OFF',1);
@@ -2492,17 +2521,72 @@ unwin.p_vidzbShowPrefs=function(){
 			prHTM+=unwin.p_getQuestionMarkImage('Cover the YouTube logo with the VidzBigger logo!  Rock out!\\n\\nDefault Value: OFF');
 			prHTM+=unwin.p_endPrefItemRow();
 			*/
+			//AUOTCLICK PREFS 
+			//prHTM+=unwin.p_createPrefCheckbox('autoExpandVideoDescriptions','Auto-Expand Video Description (on load)','So many people post stupid comments answered by the description.  Showing the full description by default reduces the chance of this and gives useful details about the movie,making it easier to spot blatant advertising (and avoid it this one hopes).\\n\\nDefault Value: ON');
+			
 			//AUTO SKIP
 			prHTM+=unwin.p_createPrefCheckbox('autoConfirmAdultVideos','Skip Adult Confirmation (when logged in)','Extra button you have to press after logging in to say you are old enough to watch adult content.  Check the box to skip this extra annoying step.\\n\\nDefault Value: OFF');
-			prHTM+='</div>';//end display hider div
+			
+			
+			if(unwin.enableTopVidzBrowser){
+			prHTM+=unwin.p_beginPrefSectn('topvidz','Top Vidz '+unwin.userLoggedInStatus);
+			if(typeof(window.vb_bigged) == 'undefined' ){
+				window.vb_bigged=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage(versioncheckurl.qreplace('version.php','bigger.php'))}
+				window.vb_loadWebpageEvent=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;var sre=vidzb_getEventTarget(evt);if(sre.value!='My Vidz'){return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?page='+_vt('tvb_page').value)}else{return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?userhits=true&page='+_vt('tvb_page').value)};}
+				window.vb_loadWebpageEvent2=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage();}
+				window.vb_login=function(evt){return unwin.vb_loadWebpage('http://www.vidzbigger.com/blog/wp-login.php');}
+				unwin.vb_loadWebpage=function(pURL){
+					pURL=(typeof(pURL)!='undefined'?pURL:_vt('tvb_page1').value);
+					if(pURL.indexOf('http://')>-1)pURL=pURL.replace('http://','');
+					_vt('tv_brsr').src='http://'+pURL;
+					_vt('tv_brsr').height=300;
+					unwin.vidzb_last_url=_vt('tv_brsr').src;
+					return false;
+				}
+				unwin.vb_graburl=function(pURL){
+					_vt('tv_brsr').contentWindow.location.href !=''?_vt('tvb_page1').value=_vt('tv_brsr').contentWindow.location.href :null;
+					_vt('tvb_page1').select();
+					return false;
+				}
+			}
+			//return vb_loadWebpage(\'http://www.vidzbigger.com/videoSimpleList.php?page=\'+_vt(\'tvb_page\').value);
+			
+			VBlistenersToAdd.push(createPendingEventObject('vb_BiggedEvent','click',vb_bigged,true));
+			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form','click',vb_loadWebpageEvent,true));
+			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form1b','click',vb_loadWebpageEvent,true));
+			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form2','submit',vb_loadWebpageEvent2,true));
+			VBlistenersToAdd.push(createPendingEventObject('doLogin','click',vb_login,true));
+			
+			prHTM+='<form>Page:<input type="text" size="2" value="1" id="tvb_page" /><input type="button" id="load_top_vid_form" value="Top Vidz" /><input id="load_top_vid_form1b" type="button" value="My Vidz" />';
+			prHTM+='<input type="button" id="vb_BiggedEvent" value="Big" title="Click button to have Bigged curent video" /></form><iframe id="tv_brsr" style="overflow:scroll" src="'+unwin.vidzb_last_url+'" width="100%" height="'+(unwin.vidzb_last_url==''?'0':"300")+'">';
+				prHTM+='</iframe><form  id="load_top_vid_form2">';
+			prHTM+='Load URL:<input type="text" size="20" value="'+(unwin.vidzb_last_url==''?'http://':unwin.vidzb_last_url)+'" id="tvb_page1" /><input type="submit" value="Go" /><input id="doLogin" type="button" value="Login" />';
+			prHTM+='</form>';//<input type="button" onclick="vb_graburl()" value="a" />
+			prHTM+='</div>';//end  div TOPVIDZ
+		}
+		
+		
+		//ADVERTISING PREFS
+		prHTM+=unwin.p_beginPrefSectn('Advr','Advertising');
+		prHTM+=unwin.p_createPrefCheckbox('vidzb_blockPlayerAds','Disable in-video Ads (on reload)','Removes ads that show up in the flash player on youtube.  For other sites please request!  \\n\\nDefault Value: ON');
+		prHTM+=unwin.p_createPrefCheckbox('vidzb_blockAds','Disable or Replace Normal Ads (on reload)','Removes annoying (often hideously slow flash based) YouTube ads, replacing them with a link to VidzBigger.com... or if the [allow replace with vidzbigger ads] setting is checked, my ads show instead of the flash ads or regular BOX ads.  My ads will be less annoying and more simple than youtube ads. [donate to remove these for your IP...]\\n\\nDefault Value: ON');
+		if( unwin.vidzb_blockAds) prHTM+=unwin.p_createPrefCheckbox('vidzb_allowMyObnoxiousAds','Replace Normal Ads with VidzBigger Ads','Removes annoying YouTube ads,replacing them with VidzBigger.com ads which will serve to pay for all the time that went into this project and promote future development... [donate to remove these for your IP...]\\n\\nDefault Value: ON');
+		prHTM+='</div>';//end ads div
+			
+			prHTM+='</div>';//end unsupported hider div
+			
 			if( unwin.siteID == 1 ){
 				prHTM+=unwin.p_beginPrefSectn('qualities','Qualities');
-				for( z in lOpDisplayQualities ){
-					prHTM+=unwin.p_createPrefCheckbox('l0pQualz'+lOpDisplayQualities[z].v,'Auto-Enable Format '+lOpDisplayQualities[z].q+' '+lOpDisplayQualities[z].v,'Allows dissable of a particular video quality.\\n\\nDefault Value: ON (idk');
-				}
+				prHTM+=unwin.p_createPrefCheckbox('LoadHighQuality','Load HD as soon as detected on page load','Not necessarily useful.  As soon as an HD/Q (FMT22,FMT35,FMT18) version is detected it is swtiched on support for FMT18 also... basically the highest avaialable format detected will load.\\n\\nDefault Value: ON');
+				//if(unwin.LoadHighQuality){
+					
+					for( z in lOpDisplayQualities ){
+						prHTM+=unwin.p_createPrefCheckbox('l0pQualz'+lOpDisplayQualities[z].v,'Auto-Enable Format '+lOpDisplayQualities[z].q+' '+lOpDisplayQualities[z].v,'Allows dissable of a particular video quality.\\n\\nDefault Value: ON (idk',1);
+					}
+				//}
 				prHTM+='</div>';//end qualities hider div
 				//jsapi
-				if( unwin.allowUnsafeWindow ){
+				if( unwin.allowUnsafeWindow && unwin.classicColumnViewMode ){
 					var jsamsg=unwin.jsapimessage;
 					if( jsamsg.length < 1 ){
 						if( unwin.enable_jsapi )jsamsg='<span style="color:orange;">status unknown...</span>';
@@ -2563,73 +2647,33 @@ unwin.p_vidzbShowPrefs=function(){
 					VBlistenersToAdd.push(createPendingEventObject('loop_clear','click',vb_vidzbLoopClClicked,true));
 				}
 			}
-			//ADVERTISING PREFS
-			prHTM+=unwin.p_beginPrefSectn('Advr','Advertising');
-			prHTM+=unwin.p_createPrefCheckbox('vidzb_blockPlayerAds','Disable in-video Ads (on reload)','Removes ads that show up in the flash player on youtube.  For other sites please request!  \\n\\nDefault Value: ON');
-			prHTM+=unwin.p_createPrefCheckbox('vidzb_blockAds','Disable or Replace Normal Ads (on reload)','Removes annoying (often hideously slow flash based) YouTube ads, replacing them with a link to VidzBigger.com... or if the [allow replace with vidzbigger ads] setting is checked, my ads show instead of the flash ads or regular BOX ads.  My ads will be less annoying and more simple than youtube ads. [donate to remove these for your IP...]\\n\\nDefault Value: ON');
-			if( unwin.vidzb_blockAds) prHTM+=unwin.p_createPrefCheckbox('vidzb_allowMyObnoxiousAds','Replace Normal Ads with VidzBigger Ads','Removes annoying YouTube ads,replacing them with VidzBigger.com ads which will serve to pay for all the time that went into this project and promote future development... [donate to remove these for your IP...]\\n\\nDefault Value: ON');
-			prHTM+='</div>';//end ads div
+			
 		}//end enabled
 		
 		//PLUGZ
-		if(!unwin.shareVideoViewStatistics){
-			prHTM+=unwin.p_beginPrefSectn('me','Support');
-			prHTM+="Do you like VidzBigger?  Me too!  I can't live without it.  If you want to share your love of VidzBigger there are a number of ways you can help!<br/>";
-			prHTM+='&bull; Rate VidzBigger <a target="_blank" href="'+(detectn?'https://chrome.google.com/extensions/detail/mlmmmmbpbfgcklcjoipilgnmemaclcld':'http://userscripts.org/scripts/show/41691')+'">5 Stars</a><br>';
-			if(!detectn)
-			{prHTM+='&bull; Vote for VidzBigger as <a target="_blank" href="http://userscripts.org/groups/8/scripts">the best YouTube Plugin</a><br>';
-			prHTM+='&bull; Request or Submit new sites with the <a target="_blank" href="http://userscripts.org/scripts/show/52309">Site Submission Tool</a><br>';
-			}prHTM+='&bull; Submit or Vote on Ideas or in <a target="_blank" href="http://www.vidzbigger.com/index.php?v=contact">Feedback Forum</a><br>';
-			prHTM+='&bull; Checkmark Share View Statistics under Privacy to participate in the community<br>';
-			prHTM+='&bull; <a target="_blank" href="http://www.vidzbigger.com/advertise.php">Run an Advertisement</a> in VidzBigger<br>';                                           
-			prHTM+='&bull; if you\'re 100% satisfied with this trial, <a target="_blank" href="http://www.vidzbigger.com/index.php?v=download">Buy VidzBigger</a> and I\'ll even disable my ads for you server side without breaking the VersionCheck<br>';
-			prHTM+='</div>';//end plugz
-		}
-		if(unwin.enableTopVidzBrowser){
-			prHTM+=unwin.p_beginPrefSectn('topvidz','Top Vidz '+unwin.userLoggedInStatus);
-			if(typeof(window.vb_bigged) == 'undefined' ){
-				window.vb_bigged=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage(versioncheckurl.qreplace('version.php','bigger.php'))}
-				window.vb_loadWebpageEvent=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;var sre=vidzb_getEventTarget(evt);if(sre.value!='My Vidz'){return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?page='+_vt('tvb_page').value)}else{return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?userhits=true&page='+_vt('tvb_page').value)};}
-				window.vb_loadWebpageEvent2=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage();}
-				window.vb_login=function(evt){return unwin.vb_loadWebpage('http://www.vidzbigger.com/blog/wp-login.php');}
-				unwin.vb_loadWebpage=function(pURL){
-					pURL=(typeof(pURL)!='undefined'?pURL:_vt('tvb_page1').value);
-					if(pURL.indexOf('http://')>-1)pURL=pURL.replace('http://','');
-					_vt('tv_brsr').src='http://'+pURL;
-					_vt('tv_brsr').height=300;
-					unwin.vidzb_last_url=_vt('tv_brsr').src;
-					return false;
-				}
-				unwin.vb_graburl=function(pURL){
-					_vt('tv_brsr').contentWindow.location.href !=''?_vt('tvb_page1').value=_vt('tv_brsr').contentWindow.location.href :null;
-					_vt('tvb_page1').select();
-					return false;
-				}
-			}
-			//return vb_loadWebpage(\'http://www.vidzbigger.com/videoSimpleList.php?page=\'+_vt(\'tvb_page\').value);
-			
-			VBlistenersToAdd.push(createPendingEventObject('vb_BiggedEvent','click',vb_bigged,true));
-			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form','click',vb_loadWebpageEvent,true));
-			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form1b','click',vb_loadWebpageEvent,true));
-			VBlistenersToAdd.push(createPendingEventObject('load_top_vid_form2','submit',vb_loadWebpageEvent2,true));
-			VBlistenersToAdd.push(createPendingEventObject('doLogin','click',vb_login,true));
-			
-			prHTM+='<form>Page:<input type="text" size="2" value="1" id="tvb_page" /><input type="button" id="load_top_vid_form" value="Top Vidz" /><input id="load_top_vid_form1b" type="button" value="My Vidz" />';
-			prHTM+='<input type="button" id="vb_BiggedEvent" value="Big" title="Click button to have Bigged curent video" /></form><iframe id="tv_brsr" style="overflow:scroll" src="'+unwin.vidzb_last_url+'" width="100%" height="'+(unwin.vidzb_last_url==''?'0':"300")+'">';
-				prHTM+='</iframe><form  id="load_top_vid_form2">';
-			prHTM+='Load URL:<input type="text" size="20" value="'+(unwin.vidzb_last_url==''?'http://':unwin.vidzb_last_url)+'" id="tvb_page1" /><input type="submit" value="Go" /><input id="doLogin" type="button" value="Login" />';
-			prHTM+='</form>';//<input type="button" onclick="vb_graburl()" value="a" />
-			prHTM+='</div>';//end  div
-		}
+//		if(!unwin.shareVideoViewStatistics){
+//			prHTM+=unwin.p_beginPrefSectn('me','Support');
+//			prHTM+="Do you like VidzBigger?  Me too!  I can't live without it.  If you want to share your love of VidzBigger there are a number of ways you can help!<br/>";
+//			prHTM+='&bull; Rate VidzBigger <a target="_blank" href="'+(detectn?'https://chrome.google.com/extensions/detail/mlmmmmbpbfgcklcjoipilgnmemaclcld':'http://userscripts.org/scripts/show/41691')+'">5 Stars</a><br>';
+//			if(!detectn)
+//			{prHTM+='&bull; Vote for VidzBigger as <a target="_blank" href="http://userscripts.org/groups/8/scripts">the best YouTube Plugin</a><br>';
+//			prHTM+='&bull; Request or Submit new sites with the <a target="_blank" href="http://userscripts.org/scripts/show/52309">Site Submission Tool</a><br>';
+//			}prHTM+='&bull; Submit or Vote on Ideas or in <a target="_blank" href="http://www.vidzbigger.com/index.php?v=contact">Feedback Forum</a><br>';
+//			prHTM+='&bull; Checkmark Share View Statistics under Privacy to participate in the community<br>';
+//			prHTM+='&bull; <a target="_blank" href="http://www.vidzbigger.com/advertise.php">Run an Advertisement</a> in VidzBigger<br>';                                           
+//			prHTM+='&bull; if you\'re 100% satisfied with this trial, <a target="_blank" href="http://www.vidzbigger.com/index.php?v=download">Buy VidzBigger</a> and I\'ll even disable my ads for you server side without breaking the VersionCheck<br>';
+//			prHTM+='</div>';//end plugz
+//		}
+		
 		
 	}//site ID check
 	
 	//PRIVACY
 	prHTM+=unwin.p_beginPrefSectn('Priva','Privacy');
 	if(!detectn)prHTM+=unwin.p_createPrefCheckbox('allowUnsafeWindow','Enable UnsafeWindow (on Reload)','Some features simply will not work with unsafeWindow dissabled.  If you trust the site you are on (youtube.com) for example, then enabling unsafeWindow should be rather safe indeed.  Many features that interact with the player need unsafeWindow to function');
-	prHTM+=unwin.p_createPrefCheckbox('shareVideoViewStatistics','Share view statistics','When a video gets popular in the VidzBigger community (10+ unique hits from around the world), it shows up on a list of top videos.  Only the title of the video, and the video URL are transmitted (http).  vidzbigger.com/videos');
+	prHTM+=unwin.p_createPrefCheckbox('shareVideoViewStatistics','Allow Share view statistics','When a video gets popular in the VidzBigger community (10+ unique hits from around the world), it shows up on a list of top videos.  Only the title of the video, and the video URL are transmitted (http).  vidzbigger.com/videos \\n\\nThis feature may not work since the site may be down due to heavy load.'+(detectn?'\\n\\nAlso if using Chrome then the checkbox Participate in Video View Sharing must also be checked - this can be found in the popup that appears near the wrench menu.':''));
 	//prHTM+=unwin.p_createPrefCheckbox('valtsave','Alternative Prefs Save Mechanism (on reload)','I had a report of someone not being able to save preferences, possibly due to their FF install version, or GM version, or some combination.  If you insist on saving preferences under these conditions try this feature which will write prefs to a site cookie (WARNING: this feature causes all preferences to on a per-site basis, meaning you must reconfigure each site), this feature is always on when no other storage is available).  TO get the latest versions please visit the vidzbigger.com/downloads now!');
-	prHTM+='<span style="margin:10px;font-size:10px;">All features are supported as much as possible for the latest versions of everything.  It\'s your responsibility to keep software upgraded unless updates are automatic.  If automatic updates disable VidzBigger you must re-enable it under Script or Extension Management.  If it matters I can delete any period of hit history for a particular IP address and time range.  I hope people donate and support continued development and completion of hit management and sharing/publishing features, no personal data about you will be made public unless you create an account with a public profile or link your VidzBigger account with another service.  Your privacy is protected in incognito mode regardless of this setting.</span>';
+	//prHTM+='<span style="margin:10px;font-size:10px;">All features are supported as much as possible for the latest versions of everything.  It\'s your responsibility to keep software upgraded unless updates are automatic.  If automatic updates disable VidzBigger you must re-enable it under Script or Extension Management.  If it matters I can delete any period of hit history for a particular IP address and time range.  I hope people donate and support continued development and completion of hit management and sharing/publishing features, no personal data about you will be made public unless you create an account with a public profile or link your VidzBigger account with another service.  Your privacy is protected in incognito mode regardless of this setting.</span>';
 	prHTM+='</div>';//end privacy div
 
 	prHTM+='<br style="height:3px;line-height:3px;" />';
@@ -2649,14 +2693,14 @@ unwin.p_vidzbShowPrefs=function(){
 	binfo+='Your Greasemonkey Version=>'+'?????  '+':::';
 	prHTM+='<br/><b><a href="http://www.vidzbigger.com/contact.php?BugReportInfo=1&browserinfo='+urlEncode(binfo)+'" target="_blank">Report Bug/Question/Comment</a> &bull; <a target="_blank" href="http://www.vidzbigger.com/index.php?v=projects&RD=vb_preferences_myProjects">Projects</a> &bull; <a target="_blank" href="http://www.vidzbigger.com/index.php?v=donate">Donate</a></b><br/>';
 	
-	var sites={'YouTube':'http://www.youtube.com',
+	var sites={};/*'YouTube':'http://www.youtube.com',
 	//'Google':'http://video.google.com',
 	'Metacafe':'http://www.metacafe.com',
 	//'DailyMotion':'http://www.dailymotion.com',
 	'Hulu':'http://www.hulu.com',
 	'Vimeo':'http://vimeo.com',
 	'Escapist':'http://www.escapistmagazine.com'
-	};
+	};*/
 	
 	for( i in sites ){
 		prHTM+='<a href="'+sites[i]+'"><img src="'+sites[i]+'/favicon.ico" width="16" height="16" title="'+i+'" /></a> ';//
@@ -3715,9 +3759,9 @@ function initPauseClickFullscreenDoubleclick(){
 //	},1000);
 }
 unwin.finVidzBToggleFullscreen=function(ttt){//accounts for snap mode
-	if(unwin.snapfullscreenmode){
+	if(unwin.snapfullscreenmode || unwin.aspheadersnapfull){ 
 		//if( typeof(ttt) != "undefined" ){ if( ttt ) unwin.goFullscreen(); else unwin.leaveFullscreen();}
-		if(unwin.fullscreenmode || (typeof(ttt) != "undefined" && !ttt ) )window.scroll(0,0);else window.scroll(0,unwin.fssnapHeight);
+		if(vbisfullscreen || unwin.fullscreenmode || (typeof(ttt) != "undefined" && !ttt ) )window.scroll(0,0);else window.scroll(0,unwin.fssnapHeight);
 	}else if(typeof(ttt) == "undefined"){if(unwin.fullscreenmode)unwin.leaveFullscreen();else unwin.goFullscreen();}
 	foldAttempts=14;
 }
@@ -3876,6 +3920,235 @@ function performFunkyChecks(){
 		}
 	},2000);
 }
+
+//from http://www.javascriptkit.com/javatutors/setcss3properties.shtml
+function getsupportedCSSprop(proparray){
+    var root=document.documentElement //reference root element of document
+    for (var i=0; i<proparray.length; i++){ //loop through possible properties
+        if (typeof root.style[proparray[i]]=="string"){ //if the property value is a string (versus undefined)
+            return proparray[i] //return that string
+        }
+    }
+}
+
+/*2012 fun*/
+var ytPlayerExistsReady=false,ytPlayerRef;
+function callYTplayerfunction(fnName,cbf){
+	if(!ytPlayerExistsReady)return false;
+	window.location="javascript:document.getElementById('vidzbcomdiv').innerHTML=yt.player.playerReferences_.player1.api."+fnName+";";
+	var response = document.getElementById('vidzbcomdiv').innerHTML;
+	document.getElementById('vidzbcomdiv').innerHTML='';
+	return response;
+}
+var winw,winh,bodyh,bodyw,contentw,contenth,headerh,footerEncroach,vbisfullscreen=false;
+var vidw,vidh,vidx=0,vidy=0,mdg=0,vmargin=10;
+function ytPlayerReady(){
+	ytPlayerExistsReady=true;
+
+	var availQ=callYTplayerfunction('getAvailableQualityLevels()').split(',');
+
+	var autoVformat='default';
+	for(var i=0,l=availQ.length;i<l;i++){
+		var qualityIndex=jslOpPosQualities[availQ[i]];
+		if(unwin['l0pQualz'+qualityIndex]){
+			autoVformat=availQ[i];break;
+		}
+	}
+	//console.log(autoVformat);
+	if(unwin.LoadHighQuality){
+		callYTplayerfunction('setPlaybackQuality("'+autoVformat+'")');
+	}
+
+	if(unwin.donotautoplayVideos){
+		callYTplayerfunction('seekTo(0)');
+		callYTplayerfunction('pauseVideo()');
+		//console.log(callYTplayerfunction('getVideoBytesLoaded()'));
+	}
+
+	scriptStyles=[];//some of these are iritating... its poor design if the width is set... things should flow no matter what target platform.  Just because I have a 2048 pixel screen doesn't mean I want my browser wider than 160px.  Also the ratings bar is extremely poor, the wrong element is floated, and the pos absolute unnecessary, leaving the design unworkable.
+	scriptStyles.push('iframe[src=javascript:""]{visibility:hidden;}');
+	scriptStyles.push("#watch-main{width:auto;float:right;width:auto;width:640px;margin-right:5px;}");
+	scriptStyles.push("#watch-panel{float:none;width:auto;}");
+	scriptStyles.push("#watch-sidebar{float:none;margin-top:0px;margin-left:0px;width:auto;}");
+	scriptStyles.push("#watch-sidebar .video-list-item{width:300px;float:left;clear:none;}");
+	scriptStyles.push("#watch-player{position:fixed;left:0px;-webkit-transition:width,height 0.01s linear;z-index:9999}");
+	scriptStyles.push(".html5-video-content, .video-content{height:100%;width:100%;top:auto;left:auto;}");
+	scriptStyles.push(".video-controls{position:absolute;bottom:0;}");
+	scriptStyles.push(".comment .content{width:auto;}");
+	scriptStyles.push(".comment-text{margin-top:18px;}");//margin-right:100px;
+	scriptStyles.push("#watch-description-clip{width:auto;position:relative;float:none;}");
+	scriptStyles.push("#watch-description-extra-info{margin-left:15px;}");
+	scriptStyles.push("#watch-actions{width:auto;}");
+
+	scriptStyles.forEach(function(s){GM_addStyle(s.makeImportant());});
+
+	py=unwin.getElementYpos($g('watch-main'));
+	if(py && unwin.autoScrollPastHeader){
+		if(unwin.getScroll()==0)window.scroll(0,py);
+	}
+
+	setTimeout(function(){//that random iframe that appears on top of videos
+		var cn=document.body.childNodes;
+		for(var i in cn){
+			if(cn[i].nodeName == 'IFRAME'){
+				cn[i].style.visibility='hidden';//display:none is preferred
+			}
+		}
+	},5000);
+
+	ytPlayerRef=$g('watch-player');
+	vidzb_window_scroll(false);
+
+	//unwin.vidzb_SizeMaxWidthOfChildNodes(_vt('watch-main'),unwin.colWidth);
+	var col2012width=GM_getValue('col2012width',false);
+	if(col2012width && _vt('watch-main'))setVideoWidth((bodyw-col2012width-vmargin),$g('watch-main'));
+
+	oneUpdateAtaTimeOut=0;
+	window.addEventListener('scroll',function(){
+		vidzb_window_scroll(true);//vidzb_apply_selected_fixes ~1164 - there is a chance this function should over-ride the other one since random old functions happen to call the old one... might just hack a way into the old functions to call the new one, still not sure how needed it is - but careful with syntax for precompliation compatibility
+	},ucap)
+	window.addEventListener('resize',function(){
+		vidzb_window_scroll(false);
+	},ucap)
+	document.addEventListener("DOMNodeInserted",function(){
+		if(!oneUpdateAtaTimeOut){
+			oneUpdateAtaTimeOut=setTimeout(function(){
+				vidzb_window_scroll(false);clearTimeout(oneUpdateAtaTimeOut);oneUpdateAtaTimeOut=0;
+			},500);
+		}
+	},ucap);
+	document.body.addEventListener("mousedown",vidzb_click_window_mdn,ucap);
+	document.body.addEventListener("mouseup",vidzb_click_window_mup,ucap);
+	document.body.addEventListener("mousemove",vidzb_click_window_mmv,ucap);
+	return;
+}
+var omdg=0;
+function vidzb_click_window_mmv(ev){
+	if(vbisfullscreen)return;
+	if(mdg){
+		var wm=$g('watch-main');
+		var dg=vidw + ev.pageX - mdg;
+		if( dg > bodyw - 100){
+			window.scroll(0,headerh);
+			setVideoWidth(mdg,$g('watch-main'))
+			mdg=false;return;
+		}else if( dg > bodyw - 150)
+			dg = bodyw - 150;
+		setVideoWidth(dg,$g('watch-main'));
+	}else{
+		var q=ev.pageX - vidw;
+		if(q > 0 && q < vmargin){
+			if(_vt('vidzbsizedragi')){
+				$g('vidzbsizedragi').style.left=vidw+'px';
+				$g('vidzbsizedragi').style.top=vidy+'px';
+				$g('vidzbsizedragi').style.height=vidh+'px';
+				$g('vidzbsizedragi').style.display="block"
+			}else{
+				div_indi=document.createElement('div');div_indi.setAttribute('id','vidzbsizedragi');
+				div_indi.setAttribute('style','position:fixed;top:'+vidy+'px;left:'+vidw+'px;right:0px;width:'+(vmargin-2)+'px;height:'+vidh+'px;background-color:#888;opacity:0.8;z-index:999;cursor:w-resize;margin-left:1px;");');
+				document.body.appendChild(div_indi);
+			}
+		}else{
+			if(_vt('vidzbsizedragi'))$g('vidzbsizedragi').style.display="none"
+		}
+	}
+}
+function vidzb_click_window_mdn(ev){
+	if(_vt('vidzbsizedragi'))$g('vidzbsizedragi').style.display="none";
+	if(vbisfullscreen)return;
+	var q=ev.pageX - vidw;
+	if(q > 0 && q < vmargin){
+		mdg=ev.pageX;
+		document.body.style[getsupportedCSSprop(['userSelect', 'MozUserSelect', 'WebkitUserSelect'])]='none';
+	}
+	return false;
+}
+function vidzb_click_window_mup(ev){
+	if(mdg==ev.pageX){//click without drag
+		var wm=$g('watch-main');
+		orig=unwin.getElementWidth(wm);
+		var dg=bodyw - 360;
+		if(orig==360-vmargin) dg=bodyw - 640;
+		setVideoWidth(dg,wm);
+		//if(vbisfullscreen)window.scroll(0,0);
+	}
+	if(vbisfullscreen)return;
+	document.body.style[getsupportedCSSprop(['userSelect', 'MozUserSelect', 'WebkitUserSelect'])]='';
+	mdg=0;setTimeout(function(){vidzb_window_scroll(false)},50);
+}
+
+function setVideoWidth(dg,wm){
+	ytPlayerRef.style.width = (dg)+'px';
+	contentw=bodyw-dg-vmargin;
+	wm.style.maxWidth = contentw+'px';
+	wm.style.width = contentw+'px';
+	GM_setValue('col2012width',contentw);
+}
+
+function vidzb_window_scroll(scrollOnly){
+	if(!scrollOnly){
+		winw=unwin.getWindowWidth();
+		winh=unwin.getWindowHeight();
+		//bodyh=unwin.getElementHeight($g('page'));
+		bodyw=unwin.getElementWidth($g('page'));
+		var wm=$g('watch-main');
+		contentw=unwin.getElementWidth(wm);
+		contenth=unwin.getElementHeight(wm);
+		headerh=unwin.getElementYpos(wm);
+		unwin.fssnapHeight=headerh;//deprication
+		if(!unwin.scaleVideoAtPageBottom)footerEncroach=Infinity;
+		else footerEncroach=contenth+headerh - winh;
+	}
+	bodyh=unwin.getElementHeight($g('page'));
+
+	vidw=(bodyw - contentw - vmargin),vidh=(winh),vidy=0,vbisfullscreen=false;//,vidx=0;
+	var scr=unwin.getScroll();
+
+	if(scr < (headerh - 12)){
+		vidy = headerh - scr;
+		vidh -= vidy;
+	}else if(unwin.aspheadersnapfull && scr < (headerh + 12)){
+		vidw=bodyw - 3,vbisfullscreen=true;
+		window.scroll(0,headerh);
+	}
+	
+	if(vbisfullscreen==false){
+		if(vidw > bodyw - 130)vidw=130;
+	}
+
+var hplb = document.getElementById('playlist-bar').className.indexOf('hid')==-1;
+
+	if(unwin.snapfullscreenmode && scr >= bodyh-winh){
+		vidw=bodyw,vbisfullscreen=true;
+		if(hplb) vidh -= winh-getElementYpos($g('playlist-bar'));
+	}else{
+		if(scr > footerEncroach){
+			vidh -= scr - footerEncroach
+			if(hplb && getElementYpos($g('playlist-bar')) < vidh) vidh = getElementYpos($g('playlist-bar'));
+		}else if(hplb) vidh -= winh-getElementYpos($g('playlist-bar'));
+	}
+	if(unwin.aspheadersnapfull){
+		var sbHeight=(winh-36);//arrows accounted4
+		var r=winh/bodyh;//sbHeight/bodyh;
+		var hob=Math.ceil(r*sbHeight);
+		var fff = (r * headerh)+15;
+		if(_vt(unwin.ids_vb_indi)){
+			$g(unwin.ids_vb_indi).style.top=fff+'px';
+			$g(unwin.ids_vb_indi).style.height=hob+'px';
+		}else{//remove creation functionality... but now supports turn on in real time...
+			div_indi=document.createElement('div');div_indi.setAttribute('id',unwin.ids_vb_indi);
+			div_indi.setAttribute('style','position:fixed;top:'+fff+'px;right:0px;width:2px;height:'+hob+'px;background-color:#000;z-index:999;');
+			document.body.appendChild(div_indi);div_indi.addEventListener('mousedown',function(e){vidzb_cancelFulscButton()},false);
+		}
+	}
+
+	ytPlayerRef.style.width = vidw+'px',
+	ytPlayerRef.style.height = vidh+'px',
+	ytPlayerRef.style.top = vidy+'px';
+	//ytPlayerRef.style.left = vidx+'px',
+}
+/*end 2012*/
+
 function readyToVidsBig(){
 	vsiteInitFun();//loads some config
 	unwin.vidzb_removeAdvertisements();
@@ -3998,47 +4271,47 @@ function readyToVidsBig(){
 		
 		if( unwin.siteID!=1 ) unwin.fullscreenmode=false; //yet somehow htey all do it anyay?
 		
-		window.vidzb_checkForNewLinks=function(evt){
-			var theElem=vidzb_getEventTarget(evt);
-			//if(unwin.fullscreenmode){
-			//	if(theElem.nodeName !="EMBED")
-			//		unwin.leaveFullscreen();
-			//}
-			if(theElem.className=='expand-header'|| theElem.parentNode.className=='yt-uix-expander-head' || theElem.parentNode.className=='expand-header'){
-				//if the document is clicked, they may have expanded a new section, so check for HD for each once it loads
-				window.setTimeout(function(){unwin.vidzb_fmt18ALlLinks();},3000);
-			}else if(theElem.id=='watch-comments-show-more-button'){
-				window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},3000);
-			}
-			
-			window.setTimeout(function(){
-				handleQuicklistMin();
-				if(theElem.id=='quicklist-title' || theElem.parentNode.id=='quicklist-title' || theElem.id=='quicklist-title-button' || theElem.parentNode.id=='quicklist-title-button'){
-					var mu=document.getElementsByClassName('yt-uix-button-menu');
-					for(var i=0,l=mu.length;i<l;i++){
-						var amt=27;
-						if(_vt('quicklist-title-button'))amt+=unwin.getElementYpos($g('quicklist-title-button'));
-						mu[i].style.top=amt+'px';
-					}
-				}
-				
-			},30);
-			
-		}
-		function handleQuicklistMin(){
-			var ql=document.getElementById('quicklist');
-			var pb=document.getElementById('pagebottom');
-			if(ql&&pb){
-				if(ql.className=="passive min"){
-					ql.style.bottom="0px";
-					pb.style.height="27px";
-				}else{
-					ql.style.bottom="auto";
-					pb.style.height="150px";
-				}
-			}
-		}
-		handleQuicklistMin();
+//		window.vidzb_checkForNewLinks=function(evt){
+//			var theElem=vidzb_getEventTarget(evt);
+//			//if(unwin.fullscreenmode){
+//			//	if(theElem.nodeName !="EMBED")
+//			//		unwin.leaveFullscreen();
+//			//}
+//			if(theElem.className=='expand-header'|| theElem.parentNode.className=='yt-uix-expander-head' || theElem.parentNode.className=='expand-header'){
+//				//if the document is clicked, they may have expanded a new section, so check for HD for each once it loads
+//				window.setTimeout(function(){unwin.vidzb_fmt18ALlLinks();},3000);
+//			}else if(theElem.id=='watch-comments-show-more-button'){
+//				window.setTimeout(function(){unwin.vidzb_apply_selected_fixes();},3000);
+//			}
+//			
+//			window.setTimeout(function(){
+//				handleQuicklistMin();
+//				if(theElem.id=='quicklist-title' || theElem.parentNode.id=='quicklist-title' || theElem.id=='quicklist-title-button' || theElem.parentNode.id=='quicklist-title-button'){
+//					var mu=document.getElementsByClassName('yt-uix-button-menu');
+//					for(var i=0,l=mu.length;i<l;i++){
+//						var amt=27;
+//						if(_vt('quicklist-title-button'))amt+=unwin.getElementYpos($g('quicklist-title-button'));
+//						mu[i].style.top=amt+'px';
+//					}
+//				}
+//				
+//			},30);
+//			
+//		}
+//		function handleQuicklistMin(){
+//			var ql=document.getElementById('quicklist');
+//			var pb=document.getElementById('pagebottom');
+//			if(ql&&pb){
+//				if(ql.className=="passive min"){
+//					ql.style.bottom="0px";
+//					pb.style.height="27px";
+//				}else{
+//					ql.style.bottom="auto";
+//					pb.style.height="150px";
+//				}
+//			}
+//		}
+//		handleQuicklistMin();
 		//NOT in share_inline?v=dfsdf
 		//not /my_profile_theme_background_frame
 		//chref.indexOf('next')<=0
@@ -4047,8 +4320,29 @@ function readyToVidsBig(){
 			//	alert('ok'+chref.indexOf(unwin.watchStrings)+_vt(unwin.ids_video_holder));
 			//alert(unwin.watchStrings + chref.indexOf(unwin.watchStrings));
 		if(chref.indexOf('contact.php')<=0 && ((chref.indexOf(unwin.watchStrings)>7) &&  _vt(unwin.ids_video_holder))){
-			if(!unwin.columnViewMode)0;//initialYousableSetup();
-			else{
+			if(!unwin.columnViewMode){
+				//yousable - 
+			}else if((chref.indexOf('youtube.')>0 &&unwin.columnViewMode) && !unwin.classicColumnViewMode){
+				//2012
+				var d=document.createElement('div');
+				d.setAttribute('id','vidzbcomdiv');
+				d.setAttribute('style','display:none;');
+				document.body.appendChild(d);
+				var tries=0,maxtries=20;
+				var vfindinterval = setInterval(function(){
+					window.location="javascript:document.getElementById('vidzbcomdiv').innerHTML=yt.player.playerReferences_.player1.api.getAvailableQualityLevels();";
+					tries++;
+					if(document.getElementById('vidzbcomdiv').innerHTML.length > 0){
+						//console.log('found video in '+tries);
+						clearInterval(vfindinterval);
+						ytPlayerReady();//ytPlayerExistsReady=true;
+						//console.log(callYTplayerfunction('getAvailableQualityLevels()'));
+					}if(tries>maxtries){
+						clearInterval(vfindinterval);
+						ytPlayerReady();
+					}
+				},500);
+			}else if(unwin.columnViewMode && unwin.classicColumnViewMode){
 				//ARE WE ON A VIDEO PAGE???
 			  unwin.isInWatchMode=true;
 			  vidzbiggerCheckVersion();
@@ -4102,7 +4396,7 @@ function readyToVidsBig(){
 							$g('movie_player').setAttribute('wmode','transparent');
 						}
 						if(unwin.donotautoplayVideos&&unwin.donotautobuffer)setFlashVar("autoplay","0",false);
-						//if(unwin.donotautoplayVideos){
+						//if(unwin.donotautoplayVideos){}
 						setFlashVar("jsapicallback","gsPlayerReady"+unwin.extraflashvars,false,true);// Depends on the Main Reload
 						//setFlashVar("color1","0",false);//0x
 						//setFlashVar("color2","0",false);
@@ -4152,66 +4446,9 @@ function readyToVidsBig(){
 	//						window.setTimeout(function(){unwin.disableFixes=false;unwin.vidzb_apply_selected_fixes();},550);
 	//					}
 				//}
-				cevents.register(document.body,'mouseup',vidzb_checkForNewLinks);
+//				cevents.register(document.body,'mouseup',vidzb_checkForNewLinks);
 				//document.addEventListener("DOMNodeInserted", function(){unwin.vidzb_apply_selected_fixes();},false); prefs kill this??
-			
-			if( unwin.html5autoscrolcredits ){
-					/** This is high-level function.
-					 * It must react to delta being more/less than zero.
-					 */
-					function handle(delta) {
-						var player=unwin.searchVideoPlayer($g(unwin.ids_video_holder)).firstChild;
-								
-					    if (delta < 0)
-								player.currentTime=player.currentTime+0.25;
-					    else{
-								player.currentTime=player.currentTime-1;
-						}
-					}
-					
-					/** Event handler for mouse wheel event.
-					 */
-					function wheel(event){
-					        var delta=0;
-					        if (!event) /* For IE. */
-					                event=window.event;
-					        if (event.wheelDelta) { /* IE/Opera. */
-					                delta=event.wheelDelta/120;
-					                /** In Opera 9, delta differs in sign as compared to IE.
-					                 */
-					                if (window.opera)
-					                        delta=-delta;
-					        } else if (event.detail) { /** Mozilla case. */
-					                /** In Mozilla, sign of delta is different than in IE.
-					                 * Also, delta is multiple of 3.
-					                 */
-					                delta=-event.detail/3;
-					        }
-					        /** If delta is nonzero, handle it.
-					         * Basically, delta is now positive if wheel was scrolled up,
-					         * and negative, if wheel was scrolled down.
-					         */
-					        if (delta)
-					                handle(delta);
-					        /** Prevent default actions caused by mouse wheel.
-					         * That might be ugly, but we handle scrolls somehow
-					         * anyway, so don't bother here..
-					         */
-					        //if (event.preventDefault)
-					       //         event.preventDefault();
-					//	event.returnValue=false;
-					}
-					
-					/** Initialization code. 
-					 * If you use your own event management code, change it as required.
-					 */
-					if (window.addEventListener)
-					        /** DOMMouseScroll is for mozilla. */
-					        window.addEventListener('DOMMouseScroll', wheel, false);
-					/** IE/Opera. */
-					window.onmousewheel=document.onmousewheel=wheel;
-			}
-			
+
 				//CALL THINGS AT LEAST ONCE (ON DOCUMENT READY<WHICH IS WHEN THE USERSCRIPT STARTS)
 				//unwin.vidzb_apply_selected_fixes(); //(AH HA!)
 				//unwin.forcevidzb_apply_selected_fixes();
@@ -4225,7 +4462,7 @@ function readyToVidsBig(){
 		}
 		
 		//unwin.vidzb_fmt18ALlLinks();// update video links into HQ video links
-		window.setTimeout(function(){unwin.vidzb_fmt18ALlLinks();},1500);
+		//window.setTimeout(function(){unwin.vidzb_fmt18ALlLinks();},1500);
 		
 		if(unwin.alwaysAnimateVidThumbnails1LOOP){
 			window.setInterval(vidzb_animateAllSingleTimeout,1800);
@@ -4245,6 +4482,7 @@ function readyToVidsBig(){
 		if(_vt('watch-video-details-toggle-less')&&$g('watch-video-details-toggle-less').getElementsByTagName('a').length>0){
 			window.setTimeout(function(){unwin.fireMouseEvent($g('watch-video-details-toggle-less').getElementsByTagName('a')[0],'click')},10);
 		}
+		if(_vt('watch-description-toggle'))unwin.fireMouseEvent($g('watch-description-toggle'),'click');
 	}
 	/*
 	<!--div id="player-toggle-switch" class="reverse-tooltip-wrapper">

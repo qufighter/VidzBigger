@@ -3,13 +3,13 @@
       "exclude_globs": [ "http://vidzbigger.com/demo*", "http://vidzbigger.com/videoSimple*", "http://vidzbigger.com/blog*", "http://video.google.tld/videosearch*", "http://*youtube.tld/copyright*", "http://*youtube.tld/my*", "http://www.youtube.com/watch_popup*", "http://youtube.com/watch_popup*", "http://*digg.com/tools*" ],
       "js": [ "vidzbigger.user.js" ],
       "run_at": "document_idle",
-      "matches": [ "http://www.youtube.com/watch*", "http://www.youtube.com/user*", "http://www.escapistmagazine.com/*", "http://vimeo.com/*", "http://www.dailymotion.com/*", "http://www.metacafe.com/*", "http://www.hulu.com/*", "http://www.escapistmagazine.com/*" ]
+      "matches": [ "*://www.youtube.com/watch*", "*://www.youtube.com/user*", "http://www.escapistmagazine.com/*", "http://vimeo.com/*", "http://www.dailymotion.com/*", "http://www.metacafe.com/*", "http://www.hulu.com/*", "http://www.escapistmagazine.com/*" ]
    } ],
    "browser_action": {
-	    "default_icon": "icon19.png",
-	    "default_title": "VidzB",
-	    "popup": "popup.html"
-	  },
+      "default_icon": "icon19.png",
+      "default_title": "VidzB",
+      "popup": "popup.html"
+    },
    "converted_from_user_script": false,
    "description": "Automatically Scale YouTube Video to Largest Possible Size Scroll down to read comments without missing video",
    "name": "VidzBigger",
@@ -19,7 +19,7 @@
            "48": "icon48.png",
           "128": "icon128.png" },
    "permissions": [
-				  "http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
+				  "http://www.youtube.com/","http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
 				],
-   "version": "0.0.72.0"
+   "version": "0.0.72.2"
 }
