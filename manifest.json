@@ -1,4 +1,5 @@
 {
+   "manifest_version": 2,
    "content_scripts": [ {
       "exclude_globs": [ "http://vidzbigger.com/demo*", "http://vidzbigger.com/videoSimple*", "http://vidzbigger.com/blog*", "http://video.google.tld/videosearch*", "http://*youtube.tld/copyright*", "http://*youtube.tld/my*", "http://www.youtube.com/watch_popup*", "http://youtube.com/watch_popup*", "http://*digg.com/tools*" ],
       "js": [ "vidzbigger.user.js" ],
@@ -8,12 +9,13 @@
    "browser_action": {
       "default_icon": "icon19.png",
       "default_title": "VidzB",
-      "popup": "popup.html"
+      "default_popup": "popup.html"
     },
-   "converted_from_user_script": false,
    "description": "Automatically Scale YouTube Video to Largest Possible Size Scroll down to read comments without missing video",
    "name": "VidzBigger",
-   "background_page": "background.html",
+   "background": {
+      "scripts": ["crypt.js","background.js"]
+   },
    "icons": { "16": "icon16.png",
            "32": "icon32.png",
            "48": "icon48.png",
@@ -21,5 +23,5 @@
    "permissions": [
 				  "http://www.youtube.com/","http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
 				],
-   "version": "0.0.72.2"
+   "version": "0.0.72.3"
 }

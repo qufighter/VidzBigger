@@ -2153,7 +2153,7 @@ unwin.p_createPreferencesArea=function(){
 	nPDiv=document.createElement('div');	
 	nPDiv.setAttribute('id','vidzbigger_prefs_menu');
 	var opacity=100;
-	nPDiv.setAttribute('style','position:'+(unwin.prefFlagPositionFixed?'fixed':'absolute')+';min-width:160px;overflow:auto;right:0px;top:0px;padding:0px;z-index:10000;font-size:12px;font-family:arial,sans-serif;background-color:transparent;color:black;opacity:'+(opacity/100)+';filter: alpha(opacity='+(opacity)+');-moz-opacity: '+(opacity/100)+';');
+	nPDiv.setAttribute('style','position:'+(unwin.prefFlagPositionFixed?'fixed':'absolute')+';overflow:hidden;right:0px;top:0px;padding:0px;z-index:10000;font-size:12px;font-family:arial,sans-serif;background-color:transparent;color:black;opacity:'+(opacity/100)+';filter: alpha(opacity='+(opacity)+');-moz-opacity: '+(opacity/100)+';');
 	if(document.body){
 		document.body.appendChild(nPDiv);
 		unwin.p_hidePrefs(true);
@@ -2531,7 +2531,7 @@ unwin.p_vidzbShowPrefs=function(){
 			if(unwin.enableTopVidzBrowser){
 			prHTM+=unwin.p_beginPrefSectn('topvidz','Top Vidz '+unwin.userLoggedInStatus);
 			if(typeof(window.vb_bigged) == 'undefined' ){
-				window.vb_bigged=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage(versioncheckurl.qreplace('version.php','bigger.php'))}
+				window.vb_bigged=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage((versioncheckurl+nowViewing).qreplace('version.php','bigger.php'))}
 				window.vb_loadWebpageEvent=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;var sre=vidzb_getEventTarget(evt);if(sre.value!='My Vidz'){return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?page='+_vt('tvb_page').value)}else{return unwin.vb_loadWebpage('http://www.vidzbigger.com/videoSimpleList.php?userhits=true&page='+_vt('tvb_page').value)};}
 				window.vb_loadWebpageEvent2=function(evt){if(evt.preventDefault) evt.preventDefault();evt.returnValue=false;return unwin.vb_loadWebpage();}
 				window.vb_login=function(evt){return unwin.vb_loadWebpage('http://www.vidzbigger.com/blog/wp-login.php');}
@@ -2817,12 +2817,9 @@ unwin.p_hidePrefs=function(first){
 	var vdzbflagimg='<a href="javascript:void(0)"'+clickEvents+'><img align="top" style="position:relative;" id="vidzbfLagimg" src="'+unwin.vidzb_vidzBiggerFlagImage()+'" width="59" height="19" border="0" /></a>';
 	if( _vt('vidzbigger_prefs_menu') ){
 				
-		vdzbflagimg='<div style="display:inline;position:relative;max-height:19px;height:19px;float:right;background-color:black;padding-top:0px;padding-bottom:0px;"><span id="vidz_message" style="position:relative;top:3px;color:#FF4444;font-weight:bold;"></span><span style="text-decoration:none;color:white;padding-right:0px;cursor:pointer;position:relative;top:3px;" id="vidzbfLagmsg">'+unwin.defaultFlagMs+'</span></div>'+vdzbflagimg;
+		vdzbflagimg='<div style="display:inline;position:relative;height:19px;float:right;background-color:black;padding-top:0px;padding-bottom:0px;"><span id="vidz_message" style="position:relative;top:3px;color:#FF4444;font-weight:bold;"></span><span style="text-decoration:none;color:white;padding-right:0px;cursor:pointer;position:relative;top:3px;" id="vidzbfLagmsg">'+unwin.defaultFlagMs+'</span></div>'+vdzbflagimg;
 		$g('vidzbigger_prefs_menu').innerHTML=vdzbflagimg;
 		$g('vidzbigger_prefs_menu').style.textAlign="right";
-		$g('vidzbigger_prefs_menu').style.maxHeight="19px";
-		//$g('vidzbigger_prefs_menu').style.width=unwin.colWidth+"px";//chrome compatability
-		//nPDiv.setAttribute('style','position:fixed;overflow:auto;right:0px;top:0px;padding:0px;z-index:10000;font-size:12px;font-family:arial,sans-serif;background-color:transparent;color:black;opacity:'+(opacity/100)+';filter: alpha(opacity='+(opacity)+');-moz-opacity: '+(opacity/100)+';');
 		$g('vidzbigger_prefs_menu').addEventListener("click",vidzb_showPrefs,true);
 		$g('vidzbigger_prefs_menu').addEventListener("mouseover",vidzb_MouseOverFlag,true);
 		$g('vidzbigger_prefs_menu').addEventListener("mouseout",vidzb_MouseOutFlag,true);
@@ -3932,6 +3929,7 @@ function getsupportedCSSprop(proparray){
 }
 
 /*2012 fun*/
+var ismac=(navigator.platform=='MacIntel');
 var ytPlayerExistsReady=false,ytPlayerRef;
 function callYTplayerfunction(fnName,cbf){
 	if(!ytPlayerExistsReady)return false;
@@ -3971,7 +3969,7 @@ function ytPlayerReady(){
 	scriptStyles.push("#watch-panel{float:none;width:auto;}");
 	scriptStyles.push("#watch-sidebar{float:none;margin-top:0px;margin-left:0px;width:auto;}");
 	scriptStyles.push("#watch-sidebar .video-list-item{width:300px;float:left;clear:none;}");
-	scriptStyles.push("#watch-player{position:fixed;left:0px;-webkit-transition:width,height 0.01s linear;z-index:9999}");
+	scriptStyles.push("#watch-player{position:fixed;left:0px;-webkit-transition:none;z-index:9999}");
 	scriptStyles.push(".html5-video-content, .video-content{height:100%;width:100%;top:auto;left:auto;}");
 	scriptStyles.push(".video-controls{position:absolute;bottom:0;}");
 	scriptStyles.push(".comment .content{width:auto;}");
@@ -4020,6 +4018,9 @@ function ytPlayerReady(){
 	document.body.addEventListener("mousedown",vidzb_click_window_mdn,ucap);
 	document.body.addEventListener("mouseup",vidzb_click_window_mup,ucap);
 	document.body.addEventListener("mousemove",vidzb_click_window_mmv,ucap);
+	
+	unwin.isInWatchMode=true;
+	setTimeout(vidzbiggerCheckVersion,250);
 	return;
 }
 var omdg=0;
@@ -4128,7 +4129,7 @@ var hplb = document.getElementById('playlist-bar').className.indexOf('hid')==-1;
 		}else if(hplb) vidh -= winh-getElementYpos($g('playlist-bar'));
 	}
 	if(unwin.aspheadersnapfull){
-		var sbHeight=(winh-36);//arrows accounted4
+		var sbHeight=(winh-(ismac?150:36));//arrows accounted4
 		var r=winh/bodyh;//sbHeight/bodyh;
 		var hob=Math.ceil(r*sbHeight);
 		var fff = (r * headerh)+15;
@@ -4618,15 +4619,16 @@ function readyToVidsBig(){
 }
 
 function vidzbiggerCheckVersion(){
-	versioncheckurl='http://www.vidzbigger.com/version.php?version='+vidz_Version+'&watch='+unwin.isInWatchMode+'&png24='+unwin.prefer_png24bits;
-	var nowViewing='&url='+escape(window.location)+'&title='+escape(document.title);unwin.versioncheckurl=new String(versioncheckurl+nowViewing);//unwin.versioncheckurl version not used here
+	unwin.versioncheckurl='http://www.vidzbigger.com/version.php?version='+vidz_Version+'&watch='+unwin.isInWatchMode+'&png24='+unwin.prefer_png24bits;
+	unwin.nowViewing='&url='+escape(window.location)+'&title='+escape(document.title);
+	var loadur=unwin.versioncheckurl
 	if(unwin.shareVideoViewStatistics){
-	versioncheckurl+=nowViewing//know
-	}
-	//console.log(versioncheckurl);
+		loadur+=unwin.nowViewing
+	}else return;
+	//console.log(loadur);
 	GM_xmlhttpRequest({
 	  method: 'GET',
-	  url: versioncheckurl,
+	  url: loadur,
 	  onload: function(responseDetails) 
 	 {
 	  	//				 VERSION CHECK ! ! ! (important)*************************************************

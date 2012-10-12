@@ -1,6 +1,3 @@
-<html>
-<script src="crypt.js"></script>
-<script>
 String.prototype.qslice=function(before,after){
 	var s=this.indexOf(before)+before.length; 
 	var n=this.indexOf(after,s);
@@ -119,6 +116,4 @@ chrome.extension.onRequest.addListener(
 		else return false;
 }
 
-setTimeout(bodyLoad,1000)
-</script>
-</html>
+setTimeout(bodyLoad,15)
