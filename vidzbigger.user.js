@@ -972,7 +972,7 @@ unwin.vidzb_tf_prefs['alwaysAnimateVidThumbnails1LOOP']=false;
 unwin.vidzb_tf_prefs['alwaysShowModControlsUnderVideo']=true;
 unwin.vidzb_tf_prefs['preventVtBlackBars']=true;// prevent Vt black bars (above and below)
 unwin.vidzb_tf_prefs['preventHzBlackBars']=false;		// left and right
-unwin.vidzb_tf_prefs['chkAspectRatioXml']=true;		// download xml to verify aspect ratio
+unwin.vidzb_tf_prefs['chkAspectRatioXml']=false;		// download xml to verify aspect ratio
 unwin.vidzb_tf_prefs['defaultWideAspect']=false;		// default Aspect
 unwin.vidzb_tf_prefs['enableTopVidzBrowser']=false;
 unwin.vidzb_tf_prefs['enableChannelBrowser']=false;
@@ -1137,7 +1137,7 @@ unwin.preferencesToString=function(){
 	return unwin.arrayToString(parr);
 }
 if( unwin.defaultWideAspect )ratio=fmt22ratio;
-if( unwin.chkAspectRatioXml ){
+if( unwin.classicColumnViewMode && unwin.chkAspectRatioXml ){
 	function fixVideoAspectRatio(){
 		////http://gdata.youtube.com/feeds/api/videos/q3pMMwtrwiw?v=2  //known: <yt:aspectRatio>widescreen</yt:aspectRatio>
 		var vi=window.location.href.qslice('?v=','&');
@@ -3938,11 +3938,12 @@ function callYTplayerfunction(fnName,cbf){
 	document.getElementById('vidzbcomdiv').innerHTML='';
 	return response;
 }
-var winw,winh,bodyh,bodyw,contentw,contenth,headerh,footerEncroach,vbisfullscreen=false;
+var fulludc=0,winw,winh,bodyh,bodyw,contentw,contenth,headerh,footerEncroach,vbisfullscreen=false;
 var vidw,vidh,vidx=0,vidy=0,mdg=0,vmargin=10;
 function ytPlayerReady(){
 	ytPlayerExistsReady=true;
 
+/* how bout a real API for quality?
 	var availQ=callYTplayerfunction('getAvailableQualityLevels()').split(',');
 
 	var autoVformat='default';
@@ -3962,7 +3963,7 @@ function ytPlayerReady(){
 		callYTplayerfunction('pauseVideo()');
 		//console.log(callYTplayerfunction('getVideoBytesLoaded()'));
 	}
-
+*/
 	scriptStyles=[];//some of these are iritating... its poor design if the width is set... things should flow no matter what target platform.  Just because I have a 2048 pixel screen doesn't mean I want my browser wider than 160px.  Also the ratings bar is extremely poor, the wrong element is floated, and the pos absolute unnecessary, leaving the design unworkable.
 	scriptStyles.push('iframe[src=javascript:""]{visibility:hidden;}');
 	scriptStyles.push("#watch-main{width:auto;float:right;width:auto;width:640px;margin-right:5px;}");
@@ -4015,6 +4016,7 @@ function ytPlayerReady(){
 			},500);
 		}
 	},ucap);
+	
 	document.body.addEventListener("mousedown",vidzb_click_window_mdn,ucap);
 	document.body.addEventListener("mouseup",vidzb_click_window_mup,ucap);
 	document.body.addEventListener("mousemove",vidzb_click_window_mmv,ucap);
@@ -4062,7 +4064,7 @@ function vidzb_click_window_mdn(ev){
 		mdg=ev.pageX;
 		document.body.style[getsupportedCSSprop(['userSelect', 'MozUserSelect', 'WebkitUserSelect'])]='none';
 	}
-	return false;
+	//return false;
 }
 function vidzb_click_window_mup(ev){
 	if(mdg==ev.pageX){//click without drag
@@ -4087,7 +4089,7 @@ function setVideoWidth(dg,wm){
 }
 
 function vidzb_window_scroll(scrollOnly){
-	if(!scrollOnly){
+	if(fulludc>10||!scrollOnly){
 		winw=unwin.getWindowWidth();
 		winh=unwin.getWindowHeight();
 		//bodyh=unwin.getElementHeight($g('page'));
@@ -4099,7 +4101,9 @@ function vidzb_window_scroll(scrollOnly){
 		unwin.fssnapHeight=headerh;//deprication
 		if(!unwin.scaleVideoAtPageBottom)footerEncroach=Infinity;
 		else footerEncroach=contenth+headerh - winh;
+		fulludc=0;
 	}
+	fulludc++;
 	bodyh=unwin.getElementHeight($g('page'));
 
 	vidw=(bodyw - contentw - vmargin),vidh=(winh),vidy=0,vbisfullscreen=false;//,vidx=0;
@@ -4325,24 +4329,25 @@ function readyToVidsBig(){
 				//yousable - 
 			}else if((chref.indexOf('youtube.')>0 &&unwin.columnViewMode) && !unwin.classicColumnViewMode){
 				//2012
-				var d=document.createElement('div');
-				d.setAttribute('id','vidzbcomdiv');
-				d.setAttribute('style','display:none;');
-				document.body.appendChild(d);
-				var tries=0,maxtries=20;
-				var vfindinterval = setInterval(function(){
-					window.location="javascript:document.getElementById('vidzbcomdiv').innerHTML=yt.player.playerReferences_.player1.api.getAvailableQualityLevels();";
-					tries++;
-					if(document.getElementById('vidzbcomdiv').innerHTML.length > 0){
-						//console.log('found video in '+tries);
-						clearInterval(vfindinterval);
-						ytPlayerReady();//ytPlayerExistsReady=true;
-						//console.log(callYTplayerfunction('getAvailableQualityLevels()'));
-					}if(tries>maxtries){
-						clearInterval(vfindinterval);
-						ytPlayerReady();
-					}
-				},500);
+//				var d=document.createElement('div');
+//				d.setAttribute('id','vidzbcomdiv');
+//				d.setAttribute('style','display:none;');
+//				document.body.appendChild(d);
+				var tries=0,maxtries=2;
+				setTimeout(ytPlayerReady,500);
+//				var vfindinterval = setInterval(function(){
+//					window.location="javascript:document.getElementById('vidzbcomdiv').innerHTML=yt.player.playerReferences_.player1.api.getAvailableQualityLevels();";
+//					tries++;
+//					if(document.getElementById('vidzbcomdiv').innerHTML.length > 0){
+//						//console.log('found video in '+tries);
+//						clearInterval(vfindinterval);
+//						ytPlayerReady();//ytPlayerExistsReady=true;
+//						//console.log(callYTplayerfunction('getAvailableQualityLevels()'));
+//					}if(tries>maxtries){
+//						clearInterval(vfindinterval);
+//						ytPlayerReady();
+//					}
+//				},500);
 			}else if(unwin.columnViewMode && unwin.classicColumnViewMode){
 				//ARE WE ON A VIDEO PAGE???
 			  unwin.isInWatchMode=true;
