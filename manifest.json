@@ -8,8 +8,8 @@
    } ],
    "page_action": {
       "default_icon": {
-        "19": "img/g/icon19.png",
-        "38": "img/g/icon38.png"
+        "19": "img/v/icon19.png",
+        "38": "img/v/icon38.png"
       },
       "default_title": "VidsBigger",
       "default_popup": "popup.html"
@@ -21,8 +21,8 @@
       "scripts": ["crypt.js","background.js"],
       "persistent": false
    },
-   "icons": { "16": "img/g/icon16.png",
-           "32": "img/g/icon32.png",
+   "icons": { "16": "img/v/icon16.png",
+           "32": "img/v/icon32.png",
            "48": "img/icon48.png",
            "64": "img/icon64.png",
           "128": "img/icon128.png" },
