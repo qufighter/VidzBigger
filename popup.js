@@ -60,6 +60,7 @@ function cel(typ,attributes,addchilds,appnedTo){
 }
 var pendingListenrs=[];
 
+var browser_showing=false;
 var share_enabled = false;
 var crypt_enabled = false;
 var login_enabled = false;
@@ -140,8 +141,8 @@ function toggleSharing(){
 }
 
 function toggleBrowser(){
-	if( !share_enabled ){
-		_ge('enc_check').style.display='';
+	if( !browser_showing ){
+		//_ge('enc_check').style.display='';
 		_ge('extraline').style.display='';
 		cel('div',{},[
 			cel('input',{'type':'button','value':'Previous Page','events':['click',devance]}),
@@ -158,15 +159,15 @@ function toggleBrowser(){
 				//cel('input',{'type':'button','value':'Next Page','events':['click',advance]})		  	
   	],_ge('viewr'));
   	
-  	share_enabled=true;
+  	browser_showing=true;
   	
   }else{
-  	_ge('enc_check').style.display='none';
+  	//_ge('enc_check').style.display='none';
   	_ge('extraline').style.display='none';
-  	_ge('viewr').removeChild(_ge('viewr').firstChild);
-  	share_enabled=false;
+  	if(_ge('viewr').firstChild)_ge('viewr').removeChild(_ge('viewr').firstChild);
+  	browser_showing=false;
   }
-  if(share_enabled) loadTopVidzURL();
+  if(browser_showing) loadTopVidzURL();
 	//window.setTimeout(loadpage,250);
 }
 
@@ -318,11 +319,12 @@ function doit(){
 //		  		])
 		],document.body);
 
+	_ge('extraline').style.display='none';
+	
 	if( share_enabled ){
 		share_enabled = false;
 		toggleSharing();
 	}else{
-		_ge('extraline').style.display='none';
 		_ge('enc_check').style.display='none';
 	}
 }
