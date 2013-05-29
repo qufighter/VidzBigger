@@ -3,25 +3,31 @@
    "content_scripts": [ {
       "exclude_globs": [ "http://vidzbigger.com/demo*", "http://vidzbigger.com/videoSimple*", "http://vidzbigger.com/blog*", "http://video.google.tld/videosearch*", "http://*youtube.tld/copyright*", "http://*youtube.tld/my*", "http://www.youtube.com/watch_popup*", "http://youtube.com/watch_popup*", "http://*digg.com/tools*" ],
       "js": [ "vidzbigger.user.js" ],
-      "run_at": "document_idle",
+      "run_at": "document_start",
       "matches": [ "*://www.youtube.com/watch*", "*://www.youtube.com/user*", "http://www.escapistmagazine.com/*", "http://vimeo.com/*", "http://www.dailymotion.com/*", "http://www.metacafe.com/*", "http://www.hulu.com/*", "http://www.escapistmagazine.com/*" ]
    } ],
-   "browser_action": {
-      "default_icon": "icon19.png",
-      "default_title": "VidzB",
+   "page_action": {
+      "default_icon": {
+        "19": "img/g/icon19.png",
+        "38": "img/g/icon38.png"
+      },
+      "default_title": "VidsBigger",
       "default_popup": "popup.html"
     },
-   "description": "Automatically Scale YouTube Video to Largest Possible Size Scroll down to read comments without missing video",
-   "name": "VidzBigger",
+   "options_page": "popup.html",
+   "description": "Automatically Scale YouTube Video to Largest Possible Size. Scroll down to read comments.",
+   "name": "VidsBigger",
    "background": {
-      "scripts": ["crypt.js","background.js"]
+      "scripts": ["crypt.js","background.js"],
+      "persistent": false
    },
-   "icons": { "16": "icon16.png",
-           "32": "icon32.png",
-           "48": "icon48.png",
-          "128": "icon128.png" },
+   "icons": { "16": "img/g/icon16.png",
+           "32": "img/g/icon32.png",
+           "48": "img/icon48.png",
+           "64": "img/icon64.png",
+          "128": "img/icon128.png" },
    "permissions": [
 				  "http://www.youtube.com/","http://vidzbigger.com/","http://www.vidzbigger.com/","http://gdata.youtube.com/","tabs"
 				],
-   "version": "0.0.72.6"
+   "version": "0.1.0.0"
 }

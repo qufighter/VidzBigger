@@ -4,10 +4,15 @@ String.prototype.qslice=function(before,after){
 	if(n<0)return this.substr(s);
 	return this.substr(s,n-s);
 }
-chrome.extension.onRequest.addListener(
+
+function initPageAction(sender){
+	chrome.pageAction.show(sender.tab.id);
+}
+
+chrome.runtime.onMessage.addListener(
 		function(request, sender, sendResponse) {
 			//console.log(request.msgType);//DONT forget about PERMISISONS or the SIZE LIMITE on the returned object, hence we are returnign only the text now
-				if( request.msgType=="G_xmlhttpRequest" ){
+				if( request.G_xmlhttpRequest ){
 					share_enabled = ((localStorage['share_enabled']=='true')?true:false);
 					crypt_enabled = ((localStorage['crypt_enabled']=='true')?true:false);
 					//crypt_enabled=true;
@@ -62,12 +67,14 @@ chrome.extension.onRequest.addListener(
 					params=null;
 				}
 				xhr.send(params);
-			}else if( request.msgType=="G_setValue" ){
+				return true;
+			}else if( request.setValue ){
 				//console.log("saving "+request.n+" "+request.v);
 				localStorage[request.n]=request.v;
 				sendResponse({})
-			}else if( request.msgType=="G_getValues" ){//returns all stored values in a single object, for usage once
-				var response = new Object();
+			}else if( request.initializeContentScript ){//returns all stored values in a single object, for usage once
+				initPageAction(sender);
+				var response = {};
 				for( i in localStorage ){
 					response[i]=localStorage[i];
 				}
@@ -79,41 +86,42 @@ chrome.extension.onRequest.addListener(
 			//sendResponse({})
 		//}
 	});
-	var key,keyready=false,busy=false;
-	function createKey(){
-		if(busy)return;
-		if( typeof(setMaxDigits) != 'function' ){
-			localStorage.crypt_enabled=false;
-			return;
-		}
-		keyready=false;
-		//here we request a key
-		var xhr = new XMLHttpRequest();
-		xhr.onreadystatechange=function(){if(xhr.readyState == 4){
-			keyready = setKey(xhr.responseText);
-		}};
-		xhr.open('GET', 'http://www.vidzbigger.com/crypt.php', true);
-		busy=true;
-		xhr.send();
-	}
-	function setKey(tx){
-		var parts=tx.split('::');
-		var digi=parts[2]-0;
-		busy=false;
-		if( digi > 34 )setMaxDigits(digi);
-		else return false;
-		key = new RSAKeyPair(parts[0],"",parts[1]);
-		return true;
-	}
-	function bodyLoad(){
-		if(localStorage.crypt_enabled)
-			createKey();
-	}
 	
-	function cmdEncryptClick(txtPlaintext){
-		if( keyready )
-			return performencrypt(key, txtPlaintext);//encryptedString(key, txtPlaintext);
-		else return false;
+var key,keyready=false,busy=false;
+function createKey(){
+	if(busy)return;
+	if( typeof(setMaxDigits) != 'function' ){
+		localStorage.crypt_enabled=false;
+		return;
+	}
+	keyready=false;
+	//here we request a key
+	var xhr = new XMLHttpRequest();
+	xhr.onreadystatechange=function(){if(xhr.readyState == 4){
+		keyready = setKey(xhr.responseText);
+	}};
+	xhr.open('GET', 'http://www.vidzbigger.com/crypt.php', true);
+	busy=true;
+	xhr.send();
+}
+function setKey(tx){
+	var parts=tx.split('::');
+	var digi=parts[2]-0;
+	busy=false;
+	if( digi > 34 )setMaxDigits(digi);
+	else return false;
+	key = new RSAKeyPair(parts[0],"",parts[1]);
+	return true;
+}
+function bodyLoad(){
+	if(localStorage.crypt_enabled)
+		createKey();
+}
+
+function cmdEncryptClick(txtPlaintext){
+	if( keyready )
+		return performencrypt(key, txtPlaintext);//encryptedString(key, txtPlaintext);
+	else return false;
 }
 
 setTimeout(bodyLoad,15)
