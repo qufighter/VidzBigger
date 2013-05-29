@@ -24,6 +24,9 @@ echo "cleaning up"
 #remove any build folder in build folder and build.sh
 rm -fr build/1.0/build*
 rm -fr build/1.0/VidzBigger.*.zip
+rm -fr build/1.0/*.psd
+rm -fr build/1.0/*.sh
+rm -fr build/1.0/*.awk
 
 echo "determining version number"
 vers=`cat manifest.json | awk -f build.awk`

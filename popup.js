@@ -15,7 +15,12 @@ String.prototype.qslice=function(before,after){
 function _ge(g){
 	return document.getElementById(g);
 }
-
+function preventEventDefault(ev){
+	ev = ev || event;
+	if(ev.preventDefault)ev.preventDefault();
+	ev.returnValue=false;
+	return false;
+}
 //appnedTo should ONLY be specified on the last element that needs to be created
 //				which means the TOP level element (or the final parameter on the first one)
 function cel(typ,attributes,addchilds,appnedTo){
@@ -63,6 +68,9 @@ var color_toggled = false;
 var murl='http://www.vidzbigger.com/videoSimpleList.php?skip_pages=1&nonav='+(color_toggled?2:1)+'&page='
 var page=1;
 
+function ifEnterGo(ev){
+	if(ev.keyCode == 13)go2page();
+}
 function go2page(){
 	advanceto(_ge('go_page_cur').value-0)
 }
@@ -120,6 +128,17 @@ function toggleSecure(){
 	}
 	localStorage['crypt_enabled']=crypt_enabled;
 }
+function toggleSharing(){
+	if( !share_enabled ){
+		_ge('enc_check').style.display='';
+		share_enabled=true;
+	}else{
+		_ge('enc_check').style.display='none';
+		share_enabled=false;
+	}
+	localStorage['share_enabled']=share_enabled;
+}
+
 function toggleBrowser(){
 	if( !share_enabled ){
 		_ge('enc_check').style.display='';
@@ -127,7 +146,7 @@ function toggleBrowser(){
 		cel('div',{},[
 			cel('input',{'type':'button','value':'Previous Page','events':['click',devance]}),
 			cel('input',{'type':'button','value':'Next Page','events':['click',advance]}),
-			cel('input',{'type':'text','id':'go_page_cur','style':'width:60px;','value':page}),
+			cel('input',{'type':'text','id':'go_page_cur','style':'width:60px;','value':page,'events':['keyup',ifEnterGo]}),
 			cel('input',{'type':'button','value':'Go','events':['click',go2page]}),
 			cel('div',{'id':'fbrowser','style':'position:absolute;background-color:white;color:black;z-index:9999;margin:auto;','events':['click',clickedfbrowser]}),
   		cel('div',{'style':'width:600px;','id':'browser','events':['click',clickedbrowser]},[
@@ -147,12 +166,9 @@ function toggleBrowser(){
   	_ge('viewr').removeChild(_ge('viewr').firstChild);
   	share_enabled=false;
   }
-  localStorage['share_enabled']=share_enabled;
   if(share_enabled) loadTopVidzURL();
 	//window.setTimeout(loadpage,250);
 }
-
-
 
 function loadTopVidzURL(){
 	retryloadBrowserURL=loadTopVidzURL;
@@ -225,25 +241,9 @@ function shoPrefs(){
 
 var cli=0;
 function logoclick(ev){
-	if(!color_toggled){
-		document.body.style.backgroundColor='white';
-		document.body.style.color='black';
-		color_toggled=true;
-	}else{
-		document.body.style.backgroundColor='black';
-		document.body.style.color='white';
-		color_toggled=false;
-	}
-	localStorage['color_toggled']=color_toggled;
-	cli++;
-	if(cli <10)
-		ev.preventDefault();
-	if(cli==1)setTimeout(dcli,250);
-	console.log(cli);
-}
-function dcli(){
-	cli--;
-	if(cli > 0 )setTimeout(dcli,250);
+	if(ev && ev.which!==1) return;
+	toggleBrowser();
+	return preventEventDefault(ev);
 }
 
 function closeWindow(){
@@ -257,7 +257,7 @@ function goHome(){
 }
 
 function doit(){
-	document.body.removeChild(document.body.firstChild);
+	//document.body.removeChild(document.body.firstChild);
 	
 	chrome.windows.getCurrent(function(window){
 		winid=window.id;
@@ -286,10 +286,10 @@ function doit(){
 					cel('a',{'href':'javascript:0;','events':['click',closeWindow],'style':'text-decoration:none;font-size:18px;font-weight:bold;padding:5px;'},[cel(' X ')])
 				]),
 				cel('a',{'href':'http://www.vidzbigger.com','target':'_blank','events':['click',logoclick]},[
-					cel('img',{'src':'img/icon64.png','align':'middle','style':'margin:5px;','border':'0'}),
+					cel('img',{src:'img/icon64.png',width:64,height:64,'align':'middle','style':'margin:5px;','border':'0'}),
 				]),
   			cel('label',{'title':'When a video gets extremely popular in the VidzBigger community (10+ views worldwide), it will make the list of top videos for the everyone to enjoy.'},[
-  				cel('input',{'type':'checkbox','events':['click',toggleBrowser],'checked':share_enabled}),
+  				cel('input',{'type':'checkbox','events':['click',toggleSharing],'checked':share_enabled}),
   				cel("Participate in Video View Sharing ")
   			]),
   			cel('label',{'id':'enc_check','title':'256 Bit RSA Encryption of all data transmitted to vidzbigger.com, including the URL and title of each video you share.'},[
@@ -320,13 +320,11 @@ function doit(){
 
 	if( share_enabled ){
 		share_enabled = false;
-		toggleBrowser();
+		toggleSharing();
 	}else{
 		_ge('extraline').style.display='none';
 		_ge('enc_check').style.display='none';
 	}
 }
 
-document.addEventListener('DOMContentLoaded', function () {
-doit();
-});
+document.addEventListener('DOMContentLoaded', doit);

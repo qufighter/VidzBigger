@@ -158,7 +158,7 @@ function getOffset( el ){
 
 var vidIsBig=false;
 var tollerance=10;
-var videoYpos=50,vidYmin=50,vidYmax=50;
+var videoYpos=65,vidYmin=65,vidYmax=65;
 var vidBigTimeout=0;
 
 function setVideoYPosition(vyp){
@@ -180,9 +180,10 @@ function tryVidzbigger(){
 		isInWatchMode=true;
 		
 		GM_addStyle(
-	".vidzbigger #watch7-sidebar{margin-top:auto!important;}"+
-	".vidzbigger #player{padding-left:0px!important;}"+
-	".vidzbigger #player-api{width:100%!important;height:100%!important;}");
+".vidzbigger #watch7-sidebar{margin-top:auto!important;}"+
+".vidzbigger #player{padding-left:0px!important;}"+
+".vidzbigger #player-api{width:100%!important;height:100%!important;}"+
+		"");
 		VM_AppendStyles();
 		
 		setVideoYPosition(getElementYpos(_gel('player-api')));
