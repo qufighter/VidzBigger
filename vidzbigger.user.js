@@ -140,20 +140,6 @@ function vidzbiggerCheckVersion(){
 function _gel(n){
 	return document.getElementById(n);
 }
-function getScroll(){
-	if(document.all){
-		return document.body.scrollTop;
-	}else{
-		return window.pageYOffset;
-	}
-}
-function getScrollX(){
-	if(document.all){
-		return document.body.scrollLeft;
-	}else{
-		return window.pageXOffset;
-	}
-}
 function getElementYpos(el){
 		var _y=0;
 		while( el && !isNaN( el.offsetTop ) ) {
@@ -170,6 +156,7 @@ function getOffset( el ){
 	}return { y: _y, x: _x };
 }
 
+var vidIsBig=false;
 var tollerance=10;
 var videoYpos=50,vidYmin=50,vidYmax=50;
 var vidBigTimeout=0;
@@ -181,11 +168,11 @@ function setVideoYPosition(vyp){
 }
 
 function goHome(){
-	window.scrollTo(getScrollX(),0);
+	window.scrollTo(window.pageXOffset,0);
 }
 
 function goBig(){
-	window.scrollTo(getScrollX(),videoYpos);
+	window.scrollTo(window.pageXOffset,videoYpos);
 }
 
 function tryVidzbigger(){
@@ -202,14 +189,16 @@ function tryVidzbigger(){
 	
 		function viewScrolled(ev){
 			clearTimeout(vidBigTimeout);
-			var scp=getScroll();
+			var scp=window.pageYOffset;
 			if(scp > vidYmin && scp < vidYmax){
-				if(document.body.className.indexOf(' vidzbigger') < 0){
+				if(!vidIsBig){
+					vidIsBig=true;
 					document.body.className=document.body.className+' vidzbigger';
 				}
-				vidBigTimeout=setTimeout(goBig,1000)
-			}else{
+				vidBigTimeout=setTimeout(goBig,1000);//to get position exact
+			}else if(vidIsBig){
 				document.body.className=document.body.className.replace(' vidzbigger','');
+				vidIsBig=false;
 			}
 		}
 	
